@@ -1,1 +1,1 @@
-# Latex template for students thesis of MatCom
+# Documentacion del Trabajo de Diploma Sistema De Recuperacion de Imagenes usando Aprendizaje de Maquinas
