@@ -1,5 +1,6 @@
 \chapter*{Introducci\'on}\label{chapter:introduction}
 \addcontentsline{toc}{chapter}{Introducci\'on}
+
 En el pasado, el uso de la inteligencia artificial estaba restringido y se empleaba principalmente en casos de uso espec\'ificos. Las entidades que la utilizaban sol\'ian estar familiarizadas con este campo y ten\'ian objetivos bien definidos.
 
 En la actualidad se ha logrado un avanze considerable en este campo, obteniendo resultados que hace años parec\'ian poco probables. Cada vez m\'as personas est\'an comenzando a aprovechar estos beneficios, y la tecnolog\'ia est\'a cambiando r\'apidamente, con la inteligencia artificial siendo el centro de todo. Si bien antes esta tecnolog\'ia era menos utilizada,  el lanzamiento de nuevos modelos de lenguaje accesibles para todos, como GPT, ha despertado el inter\'es y la adopci\'on de la inteligencia artificial por parte de un p\'ublico m\'as amplio.
@@ -12,7 +13,7 @@ El impresionante progreso del aprendizaje autom\'atico en los \'ultimos años, e
 
 La visi\'on artificial requiere grandes cantidades de datos para aprender y descubrir patrones. Necesita una exposici\'on extensa a un contenido para adquirir conocimientos sobre \'el. La era de la informaci\'on en la que vivimos actualmente, donde abundan los datos, es el entorno perfecto para que estos algoritmos de aprendizaje se desarrollen. La combinaci\'on de este acceso a conjuntos de datos masivos con las nuevas arquitecturas de aprendizaje profundo ha dado lugar al surgimiento de modelos de visi\'on altamente capacitados. Muchos de los modelos de visi\'on artificial actuales han sido entrenados con cientos de millones de im\'agenes.
 
-Si bien los primeros modelos de visi\'on se especializaban en clasificar objetos espec\'ificos para determinar su presencia en la imagen, con el lanzamiento de la nueva arquitectura de procesamiento del lenguaje, conocida como transformers, en el a\~no 2017, se ha logrado una integraci\'on de las tareas de visi\'on artificial y procesamiento del lenguaje natural, lo cual ha arrojado resultados impresionantes. Un ejemplo de ello es el modelo CLIP, entrenado con 400 millones de im\'agenes y texto proveniente de Internet, lo que le permite comprender la similitud existente entre textos e im\'agenes.
+Si bien los primeros modelos de visi\'on se especializaban en clasificar objetos espec\'ificos para determinar su presencia en la imagen, con el lanzamiento de la nueva arquitectura de procesamiento del lenguaje, conocida como transformers[\cite{transformers}], en el a\~no 2017, se ha logrado una integraci\'on de las tareas de visi\'on artificial y procesamiento del lenguaje natural, lo cual ha arrojado resultados impresionantes. Un ejemplo de ello es el modelo CLIP[\cite{clip}], entrenado con 400 millones de im\'agenes y texto proveniente de Internet, lo que le permite comprender la similitud existente entre textos e im\'agenes.
 
 \subsection*{Motivaci\'on}
 En el contexto de los avances recientes en el campo de la visi\'on artificial, se ha abierto la posibilidad de automatizar el etiquetado de im\'agenes. Los sistemas de recuperaci\'on de informaci\'on m\'as prominentes, como Google, actualmente recuperan im\'agenes utilizando etiquetas asignadas manualmente o palabras clave en la web asociada a la imagen en cuesti\'on. La perspectiva de transferir esta labor manual a m\'aquinas resulta atractiva, aline\'andose con las tendencias actuales de la inteligencia artificial y el aprendizaje autom\'atico, con el potencial de transformar la manera en que gestionamos y organizamos las im\'agenes.
@@ -20,7 +21,7 @@ En el contexto de los avances recientes en el campo de la visi\'on artificial, s
 El desarrollo de un sistema que se dedique espec\'ificamente a etiquetar im\'agenes autom\'aticamente y un Sistema de Recuperaci\'on de Im\'agenes para recuperarlas representa un campo poco explorado. El enfoque de hacer esto manual tiene algunas limitaciones. Adem\'as, el proceso de asignaci\'on de etiquetas puede ser laborioso.
 
 \subsection*{Antecedentes}
-El campo de la visi\'on artificial ha experimentado un continuo progreso y expansi\'on, dando lugar a diversas arquitecturas y modelos que integran la comprensi\'on de lenguaje y visi\'on. Entre los ejemplos destacados se encuentran CLIP, BLIP, LLaVA y GPT-4V.
+El campo de la visi\'on artificial ha experimentado un continuo progreso y expansi\'on, dando lugar a diversas arquitecturas y modelos que integran la comprensi\'on de lenguaje y visi\'on. Entre los ejemplos destacados se encuentran CLIP, BLIP[\cite{blip}], LLaVA[\cite{llava}] y GPT-4V[\cite{gpt-4v}].
 
 CLIP (Contrastive Language-Image Pretraining) es un modelo desarrollado y publicado por OpenAI en 2021. Fue concebido con el prop\'osito de comprender y abordar tareas de visi\'on y lenguaje de manera unificada, permitiendo establecer conexiones entre texto e im\'agenes.
 
@@ -54,3 +55,17 @@ El objetivo de este trabajo consiste en desarrollar un sistema automatizado de e
 \item Desarrollar un sistema \'optimo de recuperaci\'on de informaci\'on para recuperar las im\'agenes almacenadas en la base de datos correspondiente a las im\'agenes procesadas.
 \item Realizar un an\'alisis exhaustivo de cada modelo utilizado y plantear soluciones que, por casos de limitaciones de recursos o falta de informaci\'on, su implementaci\'on pr\'actica no es viable.
 \end{itemize}
+
+
+\subsubsection*{Organizaci\'on}
+El resto del documento se encuentra organizado de la siguiente manera. En el cap\'itulo 1 se realiza el an\'alisis de una serie de modelos, arquitecturas y trabajos anteriores relacionados con la generaci\'on de texto a partir de im\'agenes. Adem\'as, se exploran t\'ecnicas de recuperaci\'on de informaci\'on con potencial para la extracci\'on de im\'agenes. Este cap\'itulo constituye el estado del arte en el campo.
+
+En el cap\'itulo 2 se lleva a cabo un estudio detallado de cada uno de los modelos empleados para abordar el problema, comparando sus caracter\'isticas y eficiencia.
+
+El cap\'itulo 3 se dedica a explicar la propuesta de soluci\'on, incluyendo la justificaci\'on de la elecci\'on de los modelos y la arquitectura final. Tambi\'en se detallan las propuestas relacionadas con el modelo de recuperaci\'on de informaci\'on y el proceso de reentrenamiento.
+
+En el cap\'itulo 4 se recopilan los detalles de la implementaci\'on y se abordan los desaf\'ios surgidos debido a la limitaci\'on de hardware y acceso a informaci\'on.
+
+El cap\'itulo 5 se enfoca en la comparaci\'on de diversas soluciones, variando los modelos utilizados en cada una de ellas, as\'i como los hiperpar\'ametros modificados. Tambi\'en se evalúa el rendimiento del modelo en su etapa inicial y despu\'es de haber sido reentrenado.
+
+Finalmente, en el cap\'itulo 6 se presentan las conclusiones derivadas de la investigaci\'on llevada a cabo.
