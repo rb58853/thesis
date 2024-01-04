@@ -1,122 +1,131 @@
 \chapter{Propuesta}\label{chapter:proposal}
-\chapter{Propuesta}\label{chapter:proposal}
-La propuesta para el sistema de recuperación de información de imágenes basado en contenido comprende dos fases principales y una fase final de sistema de recuperaci\'on. La primera fase se enfoca en el procesamiento y obtención de características de una imagen. Se emplean embeddings (vectores multi-dimensionales) como contextos, con el fin de obtener similitud entre los mismos con uso de modelos entrenados para ello.
+La propuesta para el sistema de recuperación de información de imágenes basado en contenido, comprende dos fases principales y una fase final de sistema de recuperaci\'on. La tarea de cada una de las fases, en conjunto, posibilita lograr el objetivo principal, obtener relevancia para un conjunto de im\'agenes, desde una consulta en forma de texto en lenguaje natural. Para vincular conceptos en un mismo espacio, ya sea imagen o texto, se emplean embeddings (vectores multi-dimensionales) como contextos. Sera posible establecer similitud entre cualquier cualquier concepto que se encuentre en forma de embedding, en este caso, contamos con conceptos como im\'agenes o conjunto de p\'ixeles, y texto, potencialmente, el lenguaje natural.
 
 \subsection*{Etapas de la propuesta}
 
 La primera etapa de procesamiento y extracción de características de la imagen tiene lugar durante el tiempo de indexación. Las características de las imágenes se procesan y almacenan en forma de vectores en el momento de generación de los datos. Posteriormente, utilizando estos vectores, se procede a recuperar la información en tiempo real mediante métodos mucho más rápidos y eficientes que los utilizados en tiempo de indexación. Este análisis de la imagen incluye diversas opciones y permite la ajustabilidad de parámetros para variar los resultados de acuerdo a lo que se determine más adecuado para lograr una mejor similitud entre contextos.
 
-La segunda etapa se encarga de procesar el texto proporcionado por la consulta de los usuarios. Esta etapa también está compuesta por más de una variante. Está diseñada para ser escalable, lo que permite mejorar significativamente el procesamiento del texto como lenguaje natural.
+La segunda etapa se encarga de procesar el texto proporcionado por la consulta de los usuarios. Esta etapa está compuesta por una variante implementada, y dos variantes propuestas. Está diseñada para ser escalable, lo que permite mejorar significativamente el procesamiento del texto en futuras implementaciones. 
 
-\subsection*{Fase de procesamiento de imagen}
-Esta fase se divide en variantes que, a su vez, poseen una base común en su metodología, cambiando solo los conceptos que se emplean en cada una de ellas. La metodología principal está dada por una serie de procesos que serán explicados en esta sección. Para comprender la metodología se definen dos conceptos fundamenales.
+La tercera y \'ultima etapa, es la encargada de recuperar datos relevantes para un concepto entrado por consulta. Potencialmente, los datos ser\'an im\'agenes y las consultas texto, no obstante, dado el enfoque planteado, los datos y la entrada pueden pertenecer a cualquier concepto del cual sea posible obtener su embedding. Un ejemplo de ello es que, con el mismo sistema de evaluacion, se puede pasar por consulta tanto imagenes como textos, ya que ambos poseen embeddings como contexto.  
 
-El primero es el concepto de \textbf{\textit{Image}}. Una \textit{Image} se define como un conjunto de características que se extraen de una imagen, las cuales son: un embedding, una descripción, una posición, una serie de vecinos por posición relativos a esta imagen, y límites en los ejes coordenados. Los vecinos hacen referencia a las imágenes cercanas a la \textit{Image} en cuestión. Los límites definen la región rectangular donde se encuentra ubicada la imagen, dado que una imagen no siempre ocupa todo el espacio de ambos ejes coordenados.
+\subsection*{Etapa de procesamiento de imagen}
+Esta etapa se divide en tres variantes que, a su vez, poseen una base común como metodología, cambiando solo los conceptos que se emplean en cada una de estas. La metodología principal está dada por una serie de procesos que serán explicados en esta sección. Para facilitar la comprencion de esta, se definen dos conceptos fundamenales.
 
-El segundo concepto es \textbf{\textit{ImageSet}}. Un \textit{ImageSet} se define como un conjunto de \textit{Images} donde cada una de las imágenes de referencia de estos, está relacionada con una sola imagen, una imagen general. Cada una de estas \textit{Images} constituye una segmentación de la imagen general. En resumen, \textit{ImageSet} es el conjunto de características de una imagen subdividida en segmentaciones relacionadas.
+El primero, es el concepto de \textbf{\textit{Image}}. Una \textit{Image} se define como un conjunto de características que se extraen de una imagen: un embedding, una descripción, una posición, una serie de vecinos por posición relativa a esta imagen, y límites en los ejes coordenados. Los vecinos hacen referencia a las imágenes cercanas a la \textit{Image} en cuestión. Los límites definen la región rectangular donde se encuentra ubicada la imagen, dado que una imagen no siempre ocupa todo el espacio del plano.
 
-Con estos dos conceptos aclarados, se pasa a definir la metodología base para el procesamiento de imágenes.
+El segundo concepto es \textbf{\textit{ImageSet}}. Un \textit{ImageSet} se define como un conjunto de \textit{Images} donde cada una de las imágenes de referencia de estos, está relacionada con una misma imagen, una imagen general. Cada una de estas \textit{Images} constituye una segmentación de la imagen principal. En resumen, \textit{ImageSet} es el conjunto de características de una imagen subdividida en segmentaciones relacionadas, posicionalmente, entre s\'i. 
 
-Inicialmente, para una imagen dada, se define un \textit{ImageSet} que será la encargada de agrupar todas las características de la imagen en una relación, en un conjunto. Para la extracción de características y procesamiento de la imagen, esta es segmentada; para realizar esta segmentación se utilizan modelos de segmentación de imágenes previamente entrenados. Este trabajo, en particular, utiliza el modelo de segmentación SAM (\textit{Segment Anything Model})[REF]; dado la escalabilidad del código, este modelo es perfectamente sustituíble por otro modelo que se encargue de realizar la tarea de segmentar imágenes, en trabajos futuro se pueden usar modelos más potentes o más rápidos. El tamaño de las segmentaciones, así como los hiperparámetros del modelo SAM, son modificables. En caso de se necesario, los parametros del modelo pueden ajustarse a la problem\'atica que ha surgido.
+Con estos dos conceptos aclarados, se pasa a definir la metodología base para el procesamiento de imágenes. Inicialmente, para una imagen dada, se define un \textit{ImageSet} que será la encargada de agrupar todas las características de la imagen en una relación, en un conjunto. Para la extracción de características y procesamiento de la imagen, esta pasa a ser proecsada y segmentada por un modelo de segmentaci\'on de im\'agenes. Este trabajo, en particular, utiliza el modelo de segmentación SAM (\textit{Segment Anything Model})[REF]; dado la escalabilidad del código, este \'ultimo es perfectamente sustituíble por otro modelo que se encargue de realizar la tarea de sementaci\'on de imágenes. En trabajos futuros, sera posible hacer uso de modelos más potentes o más rápidos que el integrado actualmente. El tamaño de las segmentaciones, así como los hiperparámetros del modelo SAM, son modificables. En caso de ser necesario, los parametros del modelo pueden ajustarse a la problem\'atica que ha surgido.
 
-Terminada la tarea de segmentacion de imagen, el paso que sigue, es descartar las imágenes que resultan ser semejantes a muchos conceptos muy distantes entre sí, las imágenes que son relevantes y afectan por ello los resultados esperados. Este proceso de descartar imágenes relevantes es muy importante para que los modelos usados no generen conceptos relevantes que resultan perdida de precisi\'on general. Para realizar este proceso, se cuenta con un conjunto de conceptos muy distantes entre sí, un umbral a partir del cual se considera relevante una similitud y un porcentaje que indica cuando una imagen posee una relevancia alta para el universo. Luego, una imagen sera descartada por alta relevancia, si resulta ser similar a una parte considerable del conjunto de conceptos distan mucho entre s\'i.
-Una vez concluido este proceso, se encontrará en el feature de la imagen el conjunto de imágenes que la conforman, cada una de las cuales será una imagen que contendrá, en este momento, un identificador, una posición relativa al espacio general y los límites x e y. Estos dos últimos se obtienen como resultado de aplicar el modelo de segmentación. Cada una de estas imágenes están ahora relacionadas como conjunto, teniendo esta relación, sus posiciones y sus límites. El siguiente paso es establecer las relaciones de vecindad posicionales para las imágenes.
+Terminada la tarea de segmentacion de imagen, el paso que sigue, es descartar las imágenes que resultan ser semejantes a muchos conceptos muy distantes entre sí, las imágenes que son relevantes y afectan por ello los resultados esperados. Este proceso de descartar imágenes relevantes es muy importante para que los modelos usados no generen conceptos relevantes que resultan perdida de precisi\'on general. Para realizar este proceso, se cuenta con un conjunto de conceptos muy distantes entre sí, un umbral a partir del cual se considera relevante una similitud, y un porcentaje que indica, cu\'ando una imagen posee una relevancia alta para el universo[NUM]. Ergo, una imagen sera descartada por alta relevancia, si resulta ser similar a una parte considerable del conjunto de conceptos distan mucho entre s\'i.
+Una vez concluido este proceso, se encontrará en el \textit{ImageSet} definido al inicio, todo conjunto de imágenes que la conforman, cada una de las cuales será una imagen que contendrá, en este momento, un identificador, una posición relativa al espacio general, y los límites superiores e inferiores de cada eje del plano. Estos dos últimos se obtienen como resultado de aplicar el modelo de segmentación. Cada una de estas imágenes, están ahora relacionadas como conjunto, teniendo esta relación, sus posiciones y sus límites. El siguiente paso es establecer las relaciones de vecindad posicionales para las imágenes entre s\'i.
 
 Para establecer esta relación, se cuentan con etiquetas, ya que se espera que la descripción posicional sea por texto, las etiquetas entonces están acorde a ello, están acorde a lo que se espera como lenguaje natural. Las etiquetas son las siguientes:
 \begin{itemize}
- 
-    \item \textbf{n}: Indica la cercanía a la posición superior relativa a la imagen. Dice que tan cerca está un vecino de estar en la posición superior de la imagen en cuestión.
-    \item \textbf{s}: Indica la cercanía a la posición inferior relativa a la imagen. Dice que tan cerca está un vecino de estar en la posición inferior de la imagen en cuestión.
-    \item \textbf{e}: Indica la cercanía a la posición relativa derecha a la imagen. Dice que tan cerca está un vecino de estar en la posición derecha de la imagen en cuestión.
-    \item \textbf{w}: Indica la cercanía a la posición relativa izquierda a la imagen. Dice que tan cerca está un vecino de estar en la posición superior de la imagen en cuestión.
-    \item \textbf{beside}: Indica la cercanía a la posición relativa derecha o izquierda a la imagen. Dice que tan cerca está un vecino de estar en un lado de la imagen en cuestión.
-    \item \textbf{ne}: Indica la cercanía a la posición relativa derecha superior a la imagen. Dice que tan cerca está un vecino de estar en la posición a 45° de la imagen en cuestión.
-    \item \textbf{nw}: Indica la cercanía a la posición relativa izquierda superior a la imagen. Dice que tan cerca está un vecino de estar en la posición a 135° de la imagen en cuestión.
-    \item \textbf{se}: Indica la cercanía a la posición relativa derecha inferior a la imagen. Dice que tan cerca está un vecino de estar en la posición a 315° de la imagen en cuestión.
-    \item \textbf{sw}: Indica la cercanía a la posición relativa izquierda inferior a la imagen. Dice que tan cerca está un vecino de estar en la posición a 225° de la imagen en cuestión.
+    \item \textbf{n}: Indica la cercanía a la posición superior relativa a la imagen. Dice que tan cerca está un vecino de la posición superior relativa a la imagen en cuestión.
+    \item \textbf{s}: Indica la cercanía a la posición inferior relativa a la imagen. Dice que tan cerca está un vecino de la posición inferior relativa a la imagen en cuestión.
+    \item \textbf{e}: Indica la cercanía a la posición derecha relativa a la imagen. Dice que tan cerca está un vecino de la posición derecha relativa a la imagen en cuestión.
+    \item \textbf{w}: Indica la cercanía a la posición derecha relativa a la imagen. Dice que tan cerca está un vecino de la posición derecha relativa a la imagen en cuestión.
+    \item \textbf{beside}: Indica la cercanía a la posición derecha o izquierda relativa a la imagen. Dice que tan cerca está un vecino de alg\'un lado de la imagen en cuestión.
+    \item \textbf{ne}: Indica la cercanía a la posición derecha superior relativa a la imagen. Dice que tan cerca está un vecino de la posición a 45° de la imagen en cuestión.
+    \item \textbf{nw}: Indica la cercanía a la posición izquierda superior relativa a la imagen. Dice que tan cerca está un vecino de la posición a 135° de la imagen en cuestión.
+    \item \textbf{se}: Indica la cercanía a la posición derecha inferior relativa a la imagen. Dice que tan cerca está un vecino de posición a 315° de la imagen en cuestión.
+    \item \textbf{sw}: Indica la cercanía a la posición izquierda inferior relativa a la imagen. Dice que tan cerca está un vecino de la posición a 225° de la imagen en cuestión.
     \item \textbf{in}: Indica que el vecino está dentro de la imagen en cuestión.
     \item \textbf{next}: Indica que el vecino está en una posición cercana a la imagen en cuestión.
 \end{itemize}
-Cada vecino será entonces, una relación posición-tipo de posición, donde se indica que tan similar es la posición de este con respecto a la imagen y al tipo de posición en cuestión. Por ejemplo, ejemplo(ver imagen).
+Cada vecino será entonces, una relación etiqueta-(concepto, similitud), donde se hace referencia al concepto en la posicion dada, y se indica que tan similar es la posición con respecto a una etiqueta. Por ejemplo, (ver imagen1).
 
-La definición de la similitud posicional ha sido un tema muy cuestionable, dado que se busca similitud entre lenguaje natural e imágenes. Definir entonces que tan similares son las posiciones está estrechamente relacionado con la interpretación de cómo se puede pretender explicar posiciones a nivel de lenguaje natural y cómo se espera la salida para ello.
+La definición de la similitud posicional ha sido un tema muy cuestionable, dado que se busca similitud entre lenguaje natural e imágenes. Definir entonces, qu\'e tan similares son las posiciones entre imagenes, está estrechamente relacionado con la interpretación de cómo se puede pretender explicar posiciones a nivel de lenguaje natural y cómo se espera la salida para ello.
 
-Un ejemplo claro de que la definición de posición está ajustada a la interpretación del observador sería una imagen en la que se ve un edificio. Se podría decir que el edificio está a su derecha, porque en realidad lo está, en su base coinciden. También se podría decir que el edificio está arriba, en la posición superior del objeto central. Y por supuesto, el edificio parece estar en la parte superior derecha del sujeto del centro. Se interpreta cada una de estas posiciones, pero queda definir cuál es mejor, definir que la posición derecha será mejor que la posición derecha arriba.
+\begin{adjustbox}{valign=c, left}
+\includegraphics[height=90mm]{Graphics/building.png}
+\end{adjustbox}
+Un ejemplo claro de que la definición de posición está ajustada a la interpretación del observador sería una imagen en la que se ve un edificio. Se podría decir que el edificio está a la derecha de la imagen 5[NUM], porque en realidad lo está, en su base coinciden. También se podría decir que el edificio está arriba, en la posición superior de la imagen 5. Y, evidentemente, el edificio parece estar en la zona superior derecha de la imagen 5. Se interpreta cada una de estas posiciones, definir que posicion es mejor sigue siendo un problema de interpretcion del observante.
 
-En respuesta a ello se plantearon varias métricas o alternativas para poder decidir qué usar. Por ejemplo, la métrica que utiliza distancias angulares dudará que el edificio está completamente ubicado en su derecha, mientras que las otras interpretarán que hay un edificio en su derecha con una similitud perfecta. Las métricas usadas se definen a continuación.
+Como respuesta a esta ambiguedad se plantearon varias métricas o alternativas para poder decidir qué usar. Por ejemplo, la métrica que utiliza distancias angulares dudará que el edificio está completamente ubicado en su derecha, mientras que las otras interpretarán que hay un edificio en su derecha con una similitud perfecta. Las métricas usadas se definen a continuación.
 
 \subsubsection{Ángulo entre los centros y Distancia entre los extremos}
 
 Para el calculo de esta similitud se definen las siguientes varibles:
 \begin{itemize}
-    \item $e =$ Distancia euclideana entre las imagenes. Esta se calcula como la distancia m\'inima entre los limites de las \textit{images}.
+    \item $e =$ Distancia euclideana entre las im\'agenes. Esta se calcula como la distancia m\'inima entre los l\'imites de las \textit{Images}.
 
-    \item $a =$ Angulo entre el centro del *image* y  el centro del *image* vecino.
+    \item $a =$ \'Angulo entre el centro del \textit{Image} y  el centro del \textit{Image} vecino.
 
-    \item $b =$  El \'angulo correspondiente a la posicion dada, con respecto a la imagen, por ejemplo para la posicion derecha superior se espera que el angulo este cerca de los 45*.
+    \item $b =$  El ángulo correspondiente a la posición dada, con respecto a la imagen, por ejemplo, para la posición derecha superior, se espera que el ángulo esté cerca de los 45 grados.
 
     \item $u =$  Umbral multiplicador de resultado, con ello se ajusta la salida como se desee.
 \end{itemize}
-
 Con estas variables definidas, donde para cada posici\'on var\'ia el valor del $b$ esperado, llegamos a que la similitud posicional propuesta sera: ser\'a igual a:
+
 \[sim_p_o_s = (1-e)*(1- |a-b|) * u \]
 
 \subsubsection{Reescalado las imágenes.}
 
-Esta alternativa usa la misma idea de la anterior, solo que ahora antes de calcular la distancia angular, se reescalan las imágenes a una misma dimensión, de esta manera se consigue que sean más importantes las posiciones antes que las escalas de los objetos que se analizan. Ahora un objeto con mucho más escala que otro se ajustará al pequeño para definir sus posiciones relativas.
+Esta alternativa usa la misma idea de la anterior, solo que ahora antes de calcular la distancia angular, se reescalan las imágenes a una misma dimensión. De esta manera se consigue que las posiciones sean más importantes que las escalas de los objetos que se analizan. Ahora un objeto con mucho más escala que otro se ajustará al pequeño para definir sus posiciones relativas. En caso del ejemplo anterior, \textit{imagen1}, el edificio estara a la derecha de la imagen 5, pero no se considerar\'a en zona superior porque la base en el eje horinzontal es la misma, es decir parten de la misma posici\'on. Esta es una manera interpretar relaciones posicionales, por eso ha sido planteada como una variante.
 
-\subsubsection{Alternativa de pesos en los ejees coordenados.}
+\subsubsection{Alternativa de pesos en los ejes coordenados.}
 
-Esta alternativa calcula la distancia entre los objetos tanto en el eje vertical como en el horizontal. Se le da valor de importancia al eje principal que se analiza y al eje no principal. Por ejemplo, si se está analizando que se tiene a la derecha o a la izquierda, entonces el eje principal será el eje horizontal y el secundario será el vertical, teniendo esto en cuenta se ajustan los parámetros a conveniencia de tal forma que que acerque a lo mejor posicionalmente descrito posible. Cada uno de los parámetros correspondientes a esta función:
-
+Esta alternativa calcula la distancia entre los objetos tanto en el eje vertical como en el horizontal. Tanto al eje principal como al secundario se le asignara un pes de importancia que, ajustara la distancia de este eje. El eje principal ser\'a el de dezplazamiento de la posici\'on indicada, por ejemplo, si se está analizando un objeto a la derecha o a la izquierda, entonces el eje principal será el eje horizontal, ya que de derecha a izquierda el desplazamiento es horizontal, y el secundario será el vertical. Teniendo esto en cuenta se ajustan los parámetros a conveniencia de tal forma que se acerque al mejor resultado posible, descrito posicionalmente. Cada uno de los parámetros ajustables correspondientes a esta función son los siguientes.
 
 \begin{itemize}
-    \item Multiplicador de posiciones relativas: Este parámetro se usa para ajustar con un multiplicador los valores de las posiciones relativas entre objetos.
+    \item Multiplicador de posiciones relativas: Este parámetro se usa para ajustar con un multiplicador los valores de las posiciones relativas entre objetos, es decir, el resultado de calcular la similitud poscional es modificado por este multiplicador, dando mas o menos importancia a este proceso. 
 
-    \item Importancia distancia en el eje no principal: Define qué tan importante se considera la cercanía o lejanía en el eje principal de una vecindad. Por ejemplo, si estamos trabajando en una vecindad izquierda o derecha, el eje no principal será el horizontal, el eje x.
+    \item Importancia distancia en el eje no principal: Define qué tan importante se considera la cercanía o lejanía en el eje principal de una vecindad. Por ejemplo, si estamos trabajando en una vecindad izquierda o derecha, el eje no principal será el horizontal, el eje x. Una vez se tiene la distancia del eje no principal, se eleva este resultado a la potencia del valor indicado por este par\'ametro.
 
-    \item Importancia distancia en el eje principal: Define qué tan importante se considera la cercanía o lejanía en el eje principal de una vecindad. Por ejemplo, si estamos trabajando en una vecindad izquierda o derecha, el eje principal será el horizontal, el eje y.
+    \item Importancia distancia en el eje principal: Define qué tan importante se considera la cercanía o lejanía en el eje principal de una vecindad. Por ejemplo, si estamos trabajando en una vecindad izquierda o derecha, el eje principal será el horizontal, el eje y. Una vez se tiene la distancia del eje principal, se eleva este resultado a la potencia del valor indicado por este par\'ametro.
 \end{itemize}
 
-A continuación se muestran valores de similitud por vecindad para dos métricas distintas. Estos valores son ajustables cambiando valores de parámetros indicados. La etiqueta define la posición a la cual es similar un valor, cada valor está compuesto por dos elementos, la referencia a la imagen y el valor de semejanza de sus posiciones con relación a la zona de la imagen que le corresponde.
+A continuación se muestran valores de similitud por vecindad para dos métricas distintas, mostrando la similitud de los vecinos para la \textit{imagen 3}. Estos resultados son ajustables cambiando valores de parámetros especificos. La etiqueta define la posición relativa a la imagen en custion, en este caso la imagen 3, cada valor está compuesto por dos elementos, la referencia a la imagen en la posicion 0, y en la posicion 1, el valor de semejanza de sus posiciones con relación a la zona de la imagen que le correspond, esta zona est\'a definida por la etiqueta.
 
-\begin{adjustbox}{valign=c, center}
+%\begin{adjustbox}{valign=c, center}
+\begin{figure}[h]
+\centering
+%\includegraphics[width=0.5\textwidth]{Graphics/Figure_1.png}
 \includegraphics[height=110mm]{Graphics/Figure_1.png}
-\end{adjustbox}
+\caption{Esta es una imagen.}
+\label{fig:my_label}
+\end{figure}
+%\end{adjustbox}
 
 \noindent\textbf{\'Angulo entre los centros y Distancia entre los extremos}
-\begin{lstlisting}
- w: [(image 1, 0.22916)]
- e: [(image 4, 0.75963), (image 5, 0.26565)]
- n: [(image 1, 0.56386), (image 2, 0.71565), (image 4, 0.15595)]
- s: [(image 5, 0.63434)]
- nw:[(image 1, 0.45833)]
- ne:[(image 4, 0.28072)]
+\begin{verbatim}
+Image3 Neighbords using angle_similarity
+ w: [(image 1, 0.2291)]
+ e: [(image 4, 0.7596), (image 5, 0.2656)]
+ n: [(image 1, 0.5638), (image 2, 0.7156), (image 4, 0.1559)]
+ s: [(image 5, 0.6343)]
+ nw:[(image 1, 0.4583)]
+ ne:[(image 4, 0.2807)]
  sw:[]
- se:[(image 5, 0.53130)]
+ se:[(image 5, 0.5313)]
  in:[]
  beside: [(image 1, 0.2062), (image 4, 0.6836), (image 5, 0.2390)]
- next: [(image 5, 0.6343), (image 1, 0.5638), (image 2, 0.7156), (image 4, 0.7596)]
-\end{lstlisting}
+ next: [(image 5, 0.6343), (image 1, 0.5638), (image 2, 0.7156), 
+        (image 4, 0.7596)]
+\end{verbatim}
 
 \noindent\textbf{Alternativa de pesos en los ejes coordenados}
-\begin{lstlisting}
- w: [(image 1, 0.47344711826630503)]
- e: [(image 4, 0.9369042655519807), (image 5, 0.5694883797500658)]
- n: [(image 1, 0.6555178357675728), (image 2, 0.9369042655519806), (image 4, 0.5694883797500657)]
- s: [(image 5, 0.9369042655519807)]
- nw: [(image 1, 1.128964954033878)]
- ne: [(image 4, 1.5063926453020464)]
+\begin{verbatim}
+Image3 Neighbords using weights_similarity
+ w: [(image 1, 0.4734)]
+ e: [(image 4, 0.9369), (image 5, 0.5694)]
+ n: [(image 1, 0.6555), (image 2, 0.9369), (image 4, 0.5694)]
+ s: [(image 5, 0.9369)]
+ nw: [(image 1, 1.1289)]
+ ne: [(image 4, 1.5063)]
  sw: []
- se: [(image 5, 1.5063926453020464)]
+ se: [(image 5, 1.5063)]
  in: []
- beside: [(image 1, 0.47344711826630503), (image 4, 0.9369042655519807), (image 5, 0.5694883797500658)]
- next: [(image 5, 1.5063926453020464), (image 1, 1.128964954033878), (image 2, 0.9369042655519806), (image 4, 1.5063926453020464)]
+ beside: [(image 1, 0.4734), (image 4, 0.9369), (image 5, 0.5694)]
+ next: [(image 5, 1.5063), (image 1, 1.1289), (image 2, 0.9369),
+        (image 4, 1.5063)]
+\end{verbatim}
+La segunda alternativa no tiene en cuenta las dimensiones de las segmentaciones para calcular la posición relativa. En la primera métrica, si una imagen es más alta, est\'a más extendida en el eje $y$, entonces su ángulo relativo a otra varía según la escala de la misma.
 
-\end{lstlisting}
-La segunda alternativa no tiene en cuenta las dimensiones de las segmentaciones para calcular la posición relativa. En la primera métrica, si una imagen es más alta, esta más extendida en el eje y, entonces su ángulo relativo a otra varía según la su escala.
-
-Teniendo el modelo o metodolog\'ia principal de esta fase. Sobre la base de este, se proponen tres variantes para ser utilizadas como conceptos entre los cuales, poder hallar relavancia mediante cálculos de similitud.
+Teniendo definida entonces, la metodolog\'ia principal de esta fase. Sobre la base de esta, se proponen tres variantes para ser utilizadas como conceptos, entre los cuales, poder hallar relavancia mediante cálculos de similitud.
 
 \subsubsection*{Uso de descripciones de las imágenes}
 Este método propone generar la descripción de la imagen en lenguaje natural, con el texto en lenguaje natural hallar la similitud directamente sería una opción válida, pero no es considerada en un primer momento porque un trabajo vago sire el lenguaje natural no nos garantiza una buena precisión al momento de hallar similitud. Como alternativa a esto se usan embeddings del texto, generados con modelos potentes de visión artificial que están diseñados para generar embeddings para texto. En el caso particular de este proyecto se usa el modelo CLIP que permite generar embeddings tanto desde texto como desde imágenes, vectores de 512 dimensiones. El proceso completo de esta metodología sería entonces generar descripciones desde la imagen, desde esta descripción generar un embedding y usar este último como contexto que se compare para hallar similitud entre este y los embeddings generados desde el texto de la consulta.
@@ -141,82 +150,90 @@ Esta fase consiste en extraer características del texto ingresado por consulta.
 
 Al igual que en la fase de procesamiento de imágenes, aquí también se definirán dos conceptos fundamentales para comprender la metodología utilizada.
 
-El primero es el concepto de text. Un text se define como un conjunto de características que se extraen de un texto, las cuales son: un string, un embedding, una posición y una serie de vecinos por posición relativos a este. Los vecinos hacen referencia a la cercanía entre conceptos. Por ejemplo, para el texto en lenguaje natural "In top right side of the image there are a dog next to a cat sleeping on a couch.", se espera un texto de la siguiente forma:
-\begin{lstlisting}
+El primero es el concepto de \textit{\textbf{Text}}. Un \textit{Text} se define como un conjunto de características que se extraen de un texto, las cuales son: un string, un embedding, una posición y una serie de vecinos por posición relativos a este. Los vecinos hacen referencia a la cercanía entre conceptos. Por ejemplo, para el texto en lenguaje natural \verb|"In top right side of the image there are a dog next to a cat sleeping on a couch."|, se espera un \textit{Text} de la siguiente forma:
+
+\begin{verbatim}
     text.string = "a dog next to a cat sleeping on a couch."
     text.pos = (0.5, 0.5)
     text.neighbors[next] = "cat sleeping on a couch"
-\end{lstlisting}
+\end{verbatim}
+
 Para mejor comprension del lector, se debe asumir que las posiciones van desde $[(-1,1), (1,1)]$.
 
-El segundo concepto es text feature. Un text feature se define como un conjunto de texts donde cada uno de estos son subdivisiones de un solo texto general, además también posee un text que hace referencia al texto original. En pocas palabras, text feature es el conjunto de textos que conforman el texto original, separados por puntos o por posiciones indicadas con lenguaje natural.
-Esta fase se plantean 3 variantes posibles, de las cuales una ha sido implementada.
+El segundo concepto es \textit{\textbf{TextSet}}. Un \textit{TextSet} se define como un conjunto de \textit{Texts} donde cada uno de representan subdivisiones de un \'unico texto general, además, también posee un \textit{Text} que hace referencia al texto original. En pocas palabras, \textit{TextSet} es el conjunto de textos que conforman el texto original, separados por puntos o por posiciones indicadas con lenguaje natural.
+
+Para esta fase de porcesamiento de lenguaje se plantean 3 variantes posibles, de las cuales, una ha sido implementada.
 
 \subsubsection*{Análisis sintáctico y parser}
 La variante principal e implementada en el proyecto es el uso de un parser para lenguaje natural con el fin de parsear contenido que haga referencia a relaciones posicionales. El lenguaje natural es ambiguo, un parser diseñado sobre este no será perfecto, pero puede abarcar una gran parte de las estructuras gramaticales que forman, de alguna manera, la definición de posiciones a través de texto.
 
-Esta alternativa tiene como punto débil la ambigüedad del lenguaje, ergo, en algunos casos muy particulares el proceso de parser no nos dará la salida esperada. Como punto fuerte se puede decir que esta alternativa tiene un alto nivel de escalabilidad, cada vez que se quiera definir una nueva regla gramatical es posible hacerlo, dado que el lenguaje ya es, por naturaleza, ambiguo, una nueva regla gramatical no afectará en este aspecto; siempre que se agregue una nueva regla, esta no debe generar conflictos graves con las anteriores.
+Esta alternativa tiene como principal punto débil la ambigüedad del lenguaje, ergo, en algunos casos muy particulares el proceso de parser no nos dará la salida esperada. Como punto fuerte se puede decir que esta alternativa tiene un alto nivel de escalabilidad, cada vez que se quiera definir una nueva regla gramatical es posible hacerlo, dado que el lenguaje ya es, por naturaleza, ambiguo, una nueva regla gramatical no afectará en este aspecto; siempre que se agregue una nueva regla, esta no debe generar conflictos graves con las anteriores.
 
 Para la implementación de este sistema de parser se usa la biblioteca sly[REF], esta biblioteca está diseñada para realizar análisis léxicos y sintácticos para lenguajes de programación, no está exactamente diseñada para este tipo de gramática ambigua pero se logra adaptar a las necesidades y al uso que se le da.
 
-El análisis de un texto está dividido en dos fases, la primera fase de tokenización, y la segunda fase de análisis sintáctico o parser. Los tokens están definidos según la necesidad de buscar patrones comunes para describir posiciones en imágenes. Cada una de las palabras del texto serán procesadas por un análisis léxico que definirá si está es Token o palabra común. Dado que en el lenguaje natural todas las palabras pueden ser parte de otro texto, las palabras coincidentes con los tokens no siempre será uno de estos, es decir, que una palabra esté en el grupo de tokens no implica que sea un token necesariamente. Una palabra es un token si solo si está contenida en un patrón que constituye una regla gramatical en su completitud, de esta forma solo se consideran tokens los patrones que se usan para describir relaciones posicionales. Luego de la fase de tokenización sigue la fase de análisis sintáctico, el cual se hace cargo de parsear todo el texto por relaciones posicionales en caso de que se especifiquen las mismas. Este análisis semántico o parser, está dividido en dos subetapas, dos parsers distintos: un análisis para las relaciones globales de los objetos con respecto a la imagen, y otro análisis para las relaciones posicionales.
+El análisis de un texto está dividido en dos fases, la primera fase de tokenización, y la segunda fase de análisis sintáctico o parser. Los tokens están definidos según la necesidad de buscar patrones comunes para describir posiciones en imágenes. Cada una de las palabras del texto serán procesadas por un análisis léxico que definirá si esta es token o palabra común. Dado que en el lenguaje natural todas las palabras pueden ser parte de otro texto, las palabras coincidentes con los tokens no siempre serán uno de estos, es decir, que una palabra esté en el grupo de tokens no implica que sea un token necesariamente. Una palabra es un token, s\'i solo s\'i, está contenida en un patrón que constituye una regla gramatical en su completitud y, este patr\'on no genera conflictos con otros patrones anteriormente analizados y seleccionados como tokens; de esta forma solo se consideran tokens los patrones que se usan para describir relaciones posicionales. 
+Seguido a esta fase de tokenización est\'a la fase de análisis sintáctico. Esta fase encarga de parsear todo el texto por relaciones posicionales en caso de que se especifiquen las mismas. Este análisis sint\'actico o parser, está dividido en dos subetapas, dos parsers distintos. El primer parser consite en un análisis para las relaciones globales de los objetos con respecto a la imagen, y e segundo análisis se encarga de las relaciones posicionales relativas entre conceptos.
 
-\subsubsubsection*Parser de posiciones globales
+\subsubsection*{Parser de posiciones globales}
 
-En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada text que conformará el text feature. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio o relativa a la imagen. Por ejemplo, para la frase: “there are a dog next to a ball in top of image” se parsea a través de la regla “IS text ON pos OF IMAGE”, de esta forma se obtiene un text con string igual a “dog next to a ball” y pos, grosso modo, igual a $(0, 0.66)$. En un primer momento el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:\\
+En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada \textit{Text} que conformará el \textit{TextSet}. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio, o relativa a la imagen. Por ejemplo, para la frase: \verb|"there are a dog next to a ball in top of image"|, se parsea a través de la regla \verb|"IS text ON pos OF IMAGE"|, de esta forma se obtiene un \textit{Text} con string igual a \verb|"dog next to a ball"| y posici\'on, grosso modo, igual a $(0, 0.66)$. En un primer momento el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:\\
 
-tokens = [ON, OF, AND, IS, POS, POSITION, IMAGE, WORD, NEXT]\\
+\begin{verbatim}
+tokens = [ON, TO, OF, AND, IS, POS, POSITION, IMAGE, WORD, NEXT]
+\end{verbatim}
 
-Cada uno de estos es representado por una palabra clave que puede corresponder a ellos, no poseen una palabra única para cada token, un token puede estar representado por más de una palabra, y cada una de estas cuando aparezca en el texto, puede representar un token de lo anteriores. Las palabras claves representan un token dado, el conjunto de palabras claves es perfectamente extensible, solo se debe agregar a este y será procesado como token.
+Cada uno de estos es representado por una palabra clave que puede corresponder a ellos, no poseen una palabra única para cada token, un token puede estar representado por más de una palabra, y cada una de estas cuando aparezca en el texto, puede representar un token de lo anteriores. Las palabras claves representan un token dado, el conjunto de palabras claves es perfectamente extensible, solo se debe agregar a este una nueva palabra clave y esta ser\'a entonces tratada como posible token.
 
-\begin{lstlisting}
+\begin{verbatim}
 keywords = {
         ON = [ in, on, at, near, find…],
         OF = [ of ],
+        TO = [ to ],
         AND = [ and ],
         IS = [ is, are, there's, find …],
-        POS = [ left, right, buttom, bottom, top, down, up, lower, center, middle, corner…],
+        POS = [ left, right, buttom, bottom, top, down, up, 
+        lower, center, middle, corner…],
         POSITION = [ position, side, location…],
         IMAGE = [ image, picture, photo…],
         NEXT = [ next, near ]
         }
-\end{lstlisting}
+\end{verbatim}
 
 Durante la fase de tokenización, cada palabra en el texto se somete a un proceso para determinar su tipo de token. Este proceso implica verificar si la palabra coincide con un patrón posible en la gramática. Si la palabra cumple con este criterio, se clasifica como un token; si no, se designa como una palabra común o WORD.
 
-Posteriormente, en la fase de análisis sintáctico, la gramática de las relaciones espaciales se considera de mayor importancia. Este análisis se basa en la identificación de patrones gramaticales que permiten expresar relaciones espaciales en el texto. Veamos como han sido definidas sus reglas patrones.
+Posteriormente, en la fase de análisis sintáctico, se define la gramática de las relaciones espaciales, la cual se considera el pilar fundamental del procesamiento de texto. Este análisis se basa en la identificación de patrones gramaticales que permiten expresar relaciones espaciales en el texto. Las reglas gramaticales han sido definidas siguiendo la siguiente gram\'atica.
  
-\begin{lstlisting}
-    WORD ::= WORD
-           | Any
+\begin{verbatim}
+WORD ::=  WORD
+        | Any
     
-    pos ::= POS
-          | POS POSITION 
+pos ::=  POS
+       | POS POSITION 
 
-    text ::= WORD
-           | [text]+
+text ::=  WORD
+        | [text]+
         
-    relation ::=  ON pos IS text
-                | ON pos OF IMAGE IS text
-                | ON pos text
-                | IS text ON pos OF IMAGE
-                | IS text ON pos ","
-                | IS text ON pos !OF
-                | text ON pos !OF
-                | text ON pos OF IMAGE
-                | ON pos "," IS text
-                | ON pos OF IMAGE "," IS text
-                | ON pos OF IMAGE "," text
-                | ON pos "," text
-\end{lstlisting}
+relation ::=  ON pos IS text
+            | ON pos OF IMAGE IS text
+            | ON pos text
+            | IS text ON pos OF IMAGE
+            | IS text ON pos ","
+            | IS text ON pos !OF
+            | text ON pos !OF
+            | text ON pos OF IMAGE
+            | ON pos "," IS text
+            | ON pos OF IMAGE "," IS text
+            | ON pos OF IMAGE "," text
+            | ON pos "," text
+\end{verbatim}
 
-!TOKEN indica que en ese patron no puede haber un token tipo TOKEN en esa posicion. Notese que, en el caso de "IS text ON pos !OF", la ausencia de !OF al final podría generar conflictos de ambigüedad y hacer que palabras necesarias sean descartadas. [TOKEN]+ indica que el token se repite una o m\'as veces.
+\verb|!TOKEN| indica que en ese patron no puede haber un token tipo \verb|TOKEN| en esa posicion. N\'otese que, en el caso de \verb|"IS text ON pos !OF"|, la ausencia de \verb|!OF| al final podría generar conflictos de ambigüedad y hacer que palabras necesarias sean descartadas. \verb|[TOKEN]|+ indica que el token se repite una o m\'as veces. \verb|Any| se refiere a un token cualquiera que sea tratado como palabra.
 
-En la segunda parte del parser, se analizan las posiciones relativas de los objetos entre sí. Al igual que en el caso anterior, existen una serie de reglas definidas para esto. Por ejemplo, para el texto "dog next to a ball", el parser seguirá la regla "text NEXT TO text". De esta forma, se espera obtener un text con string = dog, neighbors[next] = a ball.
+En la segunda parte del parser, se analizan las posiciones relativas de los objetos entre sí. Al igual que en el caso anterior, existen una serie de reglas definidas para esto. Por ejemplo, para el texto \verb|"dog next to a ball"|, el parser seguirá la regla \verb|"text NEXT TO text"|. De esta forma, se espera obtener un text con string igual a \verb|"dog"|, \verb|neighbors["next"] = "a ball"|.
 
-Este parser es muy similar al anterior, con la diferencia de que en este solo cambian algunos tokens utilizados y las reglas gramaticales. Los tokens de la etapa léxica son los siguientes:
-
-\begin{lstlisting}
+El proceso de parser y tokenizacion, es igual al anterior, solo cambian las reglas gramaticales, y tokens no necesariamente id\'enticos. Por ejemplo el token \verb|Image| o existe en esta an\'alisis. a gram\'atica del parser est\'a definida por las siguientes reglas, tokens y palabras claves definidas a continuaci\'on.
+\begin{verbatim}
+Tokenization
 tokens = [ON, OF, AND, IS, POS, POSITION, WORD, NUM, TO, NEXT]
 
 keywords = {
@@ -227,114 +244,130 @@ keywords = {
         POSITION = [position, pos, side,location]
         NEXT = [next]
         TO = [to]
-        POS = [ left, right, bottom, top, down, up, lower, center, middle, corner, near, bellow, front,      beside ]
+        POS = [ left, right, bottom, top, down, up, lower, center,
+        middle, corner, near, bellow, front, beside ...]
     }
-\end{lstlisting}
 
-Reglas gramaticales para las relaciones en esta etapa.
-\begin{lstlisting}
-     relation ::=   IS text ON pos OF text
-                  | IS text TO pos OF text
-                  | IS text ON pos TO text
-                  | IS text TO pos TO text
-                  | text ON pos TO text
-                  | text ON pos OF text
-                  | IS text , pos TO text
-                  | IS text , pos OF text
-                  | IS text pos TO text
-                  | IS text pos OF text
-                  | text pos TO text
-                  | text pos OF text
-                  | IS text NEXT TO text
-                  | IS text NEXT OF text
-                  | text NEXT OF text
-                  | text NEXT TO text
-                  | ON text pos , IS text
-                  | ON text pos , text
-                  | ON text pos IS text
-                  | ON pos OF text , IS text
-                  | ON pos OF text , text
-                  | TO pos OF text , IS text
-                  | TO pos OF text , text
-                  | ON pos TO text , IS text
-                  | ON pos TO text , text
-                  | TO pos TO text , IS text
-                  | TO pos TO text , text
-                  | ON pos OF text IS text
-                  | TO pos OF text IS text
-                  | ON pos TO text IS text
-                  | TO pos TO text IS text
-                  | pos TO text , IS text
-                  | pos TO text , text
-                  | pos OF text , IS text
-                  | pos OF text , text
-                  | pos TO text IS text
-                  | pos OF text IS text
-                  | NEXT TO text , text
-                  | NEXT OF text , text
-                  | NEXT TO text IS text
-                  | NEXT OF text IS text
-\end{lstlisting}
- Variantes propuestas
-Se ha considerado el uso de un Large Language Model (LLM) para procesar los textos de las consultas. A través de una API, se describiría el sistema del parser deseado y se esperaría que este se encargue de parsear el texto. Modelos como GPT-3 podrían ser una opción viable. Sin embargo, se ha intentado reentrenar modelos de lenguaje para pasarles entradas y salidas, pero estos no han tenido éxito debido a que no están diseñados para devolver siempre la misma respuesta para una misma entrada. Por lo tanto, no es posible entrenarlos con este objetivo. Los modelos que han fallado en este aspecto incluyen GPT-2, BERT y T5 1, 2.
+Gramatic    
+WORD ::=  WORD
+            | Any
+    
+pos ::=  POS
+           | POS POSITION 
 
-Otra alternativa es la creación de un modelo propio. Se dispone de un parser, aunque no sea perfecto, sí permite conocer cuándo será correcto y en qué tipos de casos siempre devolverá la respuesta esperada. Con esta información, se puede conformar una gran parte de un enorme conjunto de datos de forma automática, utilizando modelos de lenguajes actuales como GPT-3. Al describir al modelo el tipo de estructura gramatical que se sabe que es correcta, estos son procesados correctamente por el parser. En combinación de estas dos condiciones, se generarán grandes cantidades de datos de manera automática. Este modelo tiene la ventaja de que la dataset puede ser ampliada con casos para los cuales el parser falla, permitiendo así aprender de ellos también. Incluso se pueden crear diferentes parsers que no sean ambiguos entre sí para generar casos de prueba 4, 5.
+text ::=  WORD
+            | [text]+
+relation ::=   IS text ON pos OF text
+            | IS text TO pos OF text
+            | IS text ON pos TO text
+            | IS text TO pos TO text
+            | text ON pos TO text
+            | text ON pos OF text
+            | IS text , pos TO text
+            | IS text , pos OF text
+            | IS text pos TO text
+            | IS text pos OF text
+            | text pos TO text
+            | text pos OF text
+            | IS text NEXT TO text
+            | IS text NEXT OF text
+            | text NEXT OF text
+            | text NEXT TO text
+            | ON text pos , IS text
+            | ON text pos , text
+            | ON text pos IS text
+            | ON pos OF text , IS text
+            | ON pos OF text , text
+            | TO pos OF text , IS text
+            | TO pos OF text , text
+            | ON pos TO text , IS text
+            | ON pos TO text , text
+            | TO pos TO text , IS text
+            | TO pos TO text , text
+            | ON pos OF text IS text
+            | TO pos OF text IS text
+            | ON pos TO text IS text
+            | TO pos TO text IS text
+            | pos TO text , IS text
+            | pos TO text , text
+            | pos OF text , IS text
+            | pos OF text , text
+            | pos TO text IS text
+            | pos OF text IS text
+            | NEXT TO text , text
+            | NEXT OF text , text
+            | NEXT TO text IS text
+            | NEXT OF text IS text
+\end{verbatim}
 
-Una propuesta para este modelo ya ha sido creada pero aún no ha sido entrenada. Esta está implementada en tensorflow.keras, y es un modelo con las siguientes capas:
+\subsubsection*{Otras variantes de procesamiento de texto }
+Se ha considerado el uso de un Large Language Model (LLM) para procesar los textos de las consultas. A través de una API, se describiría el sistema del parser deseado y se esperaría que este, se encargue de parsear el texto. Modelos como GPT-3 podrían ser una opción viable. Sin embargo, se ha intentado reentrenar modelos de lenguaje para pasarles entradas y salidas, pero estos no han tenido éxito debido a que no están diseñados para devolver siempre la misma respuesta para una misma entrada. Por lo tanto, no es posible entrenarlos con este objetivo. Los modelos que han fallado en este aspecto incluyen GPT-2[ref], BERT[ref] y T5[ref].
+
+Otra alternativa valida es la creación de un modelo propio que se encargue de procesar texto y devolver relaciones posicionales de este. Se dispone de un parser, aunque no sea perfecto, sí permite conocer cuándo será correcto y en qué tipos de casos siempre devolverá la respuesta esperada. Con esta información, se puede conformar una gran parte de un enorme conjunto de datos de forma automática, utilizando modelos de lenguajes actuales como GPT-3. Al describir al modelo, el tipo de estructura gramatical que se sabe, es correcta, se pueden generar muchos casos de entrenamiento que seran correctamente procesados por el parser. En combinación de estas dos condiciones, se generarán grandes cantidades de datos de manera automática. Este modelo tiene la ventaja de que la dataset puede ser ampliada con casos para los cuales el parser pueda fallar, permitiendo así aprender tambien de estos. Incluso se pueden crear diferentes parsers que no sean ambiguos entre sí para generar casos de prueba. Ademas dado gracisa al proceso de tokenizacion tambien se tiene una relacion de importancia para cada palabra, lo cual puede constituir una capa de atencion que se centra, principalmente, en los tokens de la gram\'atica.
+
+Una propuesta para este modelo ha sido creada pero aún no ha sido entrenada. El modelo está implementado en tensorflow.keras, y esta constituido por las siguientes capas:
 
 \begin{enumerate}
     \item Dos capas de entrada, una para los tokens y otra para la atención que se le debe prestar a estos.
-    \item Dos capas de Embedding que convierten los tokens a un espacio de embedding.
-    \item Dos capas cnnlayer que son utilizadas para aprender patrones.
-    \item Una capa de Attention, para recibir las entradas y generar pesos.
-    \item Dos capas GlobalAveragePooling1D para redimensionar el espacio a una dimensión.
-    \item Una capa Concatenate, para concatenar ambas capas superiores.
-    \item Una capa Dense de 256 dimensiones.
-    \item Una capa Dense de 512 dimensiones.
-    \item Una capa Dense de 1024 dimensiones.
-    \item Una capa Dense con catidad de dimensiones igual a la longitud de la salida.
-    \item Una capa Reshape para ajustar la salida al formato de matriz deseado.
+    \item Dos capas de \textit{Embedding} que convierten los tokens a un espacio de \textit{embedding}.
+    \item Dos capas \textit{cnnlayer} que son utilizadas para aprender patrones.
+    \item Una capa de \textit{Attention}, para recibir las entradas y generar pesos segun la atenci\'on que se deba prestar a cada token.
+    \item Dos capas \textit{GlobalAveragePooling1D} para redimensionar el espacio a una dimensión.
+    \item Una capa \textit{Concatenate}, para concatenar ambas capas superiores.
+    \item Una capa \textit{Dense} de 256 dimensiones.
+    \item Una capa \textit{Dense} de 512 dimensiones.
+    \item Una capa \textit{Dense} de 1024 dimensiones.
+    \item Una capa \textit{Dense} con catidad de dimensiones igual a la longitud de la salida.
+    \item Una capa \textit{Reshape} para ajustar la salida al formato de matriz deseado.
 \end{enumerate}
-Las primeras 6 capas del modelo están basadas en la documentación oficial de TensorFlow para el uso de capas de atención
+Las primeras 6 capas del modelo están basadas en la documentación oficial de TensorFlow para el uso de capas de atención, las capas de atencion son las metodologias mas fuertes y mas utilizadas en el procesamiento del lenguaje natural. A partir del anno 2017 cuando fue publicado "Attention is all you need", el procesamiento del lenguaje natural se ha inclinado a esta arquitectura.
 
 INSERTAR GRAFICA DEL MODELO
 
-\subsection*{Fase de Cálculo de Similitud y Recuperación de Información}
+\subsection*{Etapa de cálculo de similitud y recuperación de información}
 
 Después de las dos fases anteriores, que implican el procesamiento de imágenes durante la indexación y el procesamiento de texto en tiempo real, se procede a calcular la similitud entre el texto proporcionado en la consulta y las imágenes de la base de datos.
 
-Para calcular la similitud entre un text y una image, se siguen los siguientes pasos:
-\begin{enumerate}
+Para calcular la similitud entre un \textit{Text} y una \textit{Image}, se siguen los siguientes pasos:
+\begin{itemize}
 
-    \item  Se calcula la similitud del coseno entre el embedding del \textit{text} y de la \textit{image}: $1- cos(v1,v2)/||v1||v2||$
-    \item  Se calcula la similitud por posicion, para ello se multiplica el valor dela similitud del coseno por la similitud posicional, la similitud posicional esta dada por: $1- \sqrt((v_1.pos.x - v_2.pos.x)^2+(v_1.pos.y - v_2.pos.y)^2)$.
-    \item Si el image y el text poseen similitud suficiente, es decir, una similitud superior a un umbral que determina si es relevante, entonces se avanza al siguiente paso: se pregunta por cada vecino en la posicion p relativa al \textit{image} la similitud de este con cada vecino en la posición p relativa a text. Por cada vecino en posicion p en texto, se guardara el mejor, el mas relevante, de los vecinos en la posicion p de \textit{image}. Cada uno de los resultados obtenidos de este proceso se suma a la similitud final. Si el mejor de los resultados para una posición está por debajo de un cierto umbral, entonces significa que no hay nada semejante a lo que se espera en la posición indicada, por lo que la similitud disminuirá.
-    \item La similitud final esta dada por la similitud entre un \textit{image feature} y un \textit{text feaure}, es decir por un conjunto de \textit{texts} y un conjunto de \textit{images}. Cada \textit{text} halla similitud con cada una de las \textit{images}, si esta similitud es mayor que cierto umbral, entonces se guarda, luego de recorrer todas las imagenes, la similitud para el \textit{text} sera la mejor de todas las similitudes con las \textit{images}. La similitud final, es entoces la suma de cada una de las similitudes por cada \textit{text} en \textit{text feature}.
-\end{enumerate}
+    \item  Se calcula la similitud del coseno entre el embedding del \textit{Text} y de la \textit{Image}: 
+    \[1- cos(v1,v2)/||v1||v2||\]
+
+    \item  Se calcula la similitud por posici\'on, para ello se multiplica el valor de la similitud del coseno por la similitud posicional, la similitud posicional esta dada por la forma: 
+    \[K- \sqrt((v_1.pos.x - v_2.pos.x)^2+(v_1.pos.y - v_2.pos.y)^2).\]
+
+    \item Si el \textit{Image} y el \textit{Text} poseen similitud suficiente, es decir, una similitud superior a un umbral que determina si es relevante, entonces se avanza al siguiente paso. Se pregunta por cada vecino en la posicion $p$ relativa al \textit{Image} la similitud de este con cada vecino en la posición $p$ relativa a \textit{Text}. Por cada vecino en posicion $p$ en \textit{Texto}, se guardar\'a el mejor, el m\'as relevante de los vecinos en la posicion $p$ de \textit{image}. Cada uno de los resultados obtenidos de este proceso se suma a la similitud final. Si el mejor de los resultados para una posición $p$ está por debajo de un cierto umbral, entonces significa que no hay nada semejante a lo que se espera en la posición indicada, por lo que la similitud entonces, disminuirá.
+    \item La similitud final esta dada por la similitud entre un \textit{ImageSet} y un \textit{text feaure}, es decir por un conjunto de \textit{texts} y un conjunto de \textit{Images}. Cada \textit{Text} halla similitud con cada una de las \textit{Images}, si esta similitud relevante, entonces se guarda. Luego de recorrer todas las im\'agenes, la similitud para el \textit{Text} ser\'a la mejor de todas las similitudes con cada una de las \textit{Images}. La similitud final, es entoces la suma de cada una de las similitudes por cada \textit{Text} en \textit{TextSet}. Esto garantiza que una descripci\'on detallada y precisa de la imagen, encuentre, en caso de existir, im\'agenes muy relevantes a la descripci\'on posicional.
+\end{itemize}
 
  Parametros ajustables en las fases
 \begin{itemize}
-    \item 
-    \item umbral de importancia de la distancia euclideana = float: Elevar a la potencia la distancia euclideana.
+    \item umbral de importancia de la distancia euclideana = float: Elevar a la potencia la distancia euclideana. Este valor define la imporatncia que se le da a las posiciones globales.
     \item umbral de division de la distacia euclideana = float: se divide el valor de la distancia euclineada por este valor.
-    \item similitud minima relevante para regiones vecinas = float: Si la similitud es menor que esto se considera insignificante y se deja de usar
-    \item similitud minima relevante = float: Esta es la similitud a partir de a cual puede considerarse relevante un concepto
-    \item similitud minima relevante original = float: Esta es la similitud a partir de a cual puede considerarse relevante algo en la imagen original y texto original
-    \item similitud minima relevante usando descripciones = float: Esta es la similitud a partir de a cual puede considerarse relevante algo a nivel de texto contra texto
+    \item similitud m\'inima relevante para regiones vecinas = float: Si la similitud es menor que esto se considera poco relevante y, en caso de que todas las relaciones pocicionales sean poco relavantes, la similitud de la imagen va a disminuir para una descripcion dada.
+    \item similitud m\'inima relevante = float: Esta es la similitud a partir de a cual puede considerarse relevante un concepto, se utiliza en el ambito general, la relevancia posicional y general no tienen que depender una de la otra.
+    \item similitud m\'inima relevante original = float: Esta es la similitud a partir de a cual puede considerarse relevante la smilitud entre la imagen original y texto original
+    \item similitud m\'inima relevante usando descripciones = float: Esta es la similitud a partir de a cual puede considerarse relevante algo a nivel de texto contra texto. 
     \item uso de regiones negativas = Bool: Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de cercania entre un objeto y otro
-    \item importancia de las regiones negativas = float: Defne que tan importante es una region negativa, mientras mas alto, mas baja la similitud de una region poco relevante
+    \item importancia de las regiones negativas = float: Define que tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja la similitud de una regi\'on poco relevante
 \end{itemize}
 
 \subsection*{Otras Propuestas}
 
-Una propuesta inicialmente considerada para mejorar el reconocimiento de colores en la imagen fue finalmente abandonada. Se decidió centrar más interés en la propuesta de reconocimiento posicional, ya que CLIP maneja eficientemente las relaciones de colores en las imágenes, a pesar de que no es tan competente en el manejo de las relaciones posicionales.
+Una propuesta inicialmente considerada, fue mejorar el reconocimiento de colores en la imagen, esta finalmente abandonada. Se decidió centrar más interés en la propuesta de reconocimiento posicional, ya que CLIP maneja eficientemente las relaciones de colores en las imágenes, y por el contrario no es tan competente en el manejo de las relaciones posicionales.
 
-El análisis de colores es una propuesta válida que implica un análisis exhaustivo de las segmentaciones para determinar de manera óptima a qué objeto pertenece un color. Sin embargo, para implementarlo, se requiere trabajar con máscaras como forma de segmentación y definir combinaciones de embeddings junto con el color. Aunque CLIP no es particularmente eficaz en la generación de embeddings para las máscaras, no está claro si esto mejoraría los resultados. Si se opta por utilizar otro modelo generador de embeddings, se tendrían que implementar más formas de similitudes en las que el modelo actual no es bueno, probablemente, para nuevos modelos, el dise\~no de esta propuesta resultaría en mejores resultados para ese modelo específico.
+El análisis de colores es una propuesta válida que implica un análisis exhaustivo de las segmentaciones para determinar de manera óptima a qué objeto pertenece un color. Sin embargo, para implementarlo, se requiere trabajar con máscaras como forma de segmentación y definir combinaciones de embeddings junto con el color. Aunque CLIP no es particularmente eficaz en la generación de embeddings para las máscaras, no está claro si esto mejoraría los resultados. Si se opta por utilizar otro modelo generador de embeddings, se tendrían que implementar más formas de similitudes en las que el modelo actual no es bueno, probablemente, para esos nuevos modelos, el dise\~no de esta propuesta resultaría en mejores resultados.
 
-En las imágenes, se puede observar que el control de colores de CLIP es efectivo, ya que aumenta la similitud a medida que los colores resultan más similares a los de la imagen. Sin embargo, al contrario de las relaciones posicionales, no logra alcanzar la similitud esperada.
+\begin{adjustbox}{valign=c, center}
+\includegraphics[height=65mm]{Graphics/clip_color.png}
+\includegraphics[height=65mm]{Graphics/clip_color.png}
+\end{adjustbox}
+
+En las imágenes \textit{image 3}, \textit{image 4}, se puede observar que el control de colores de CLIP es efectivo, ya que aumenta la similitud a medida que los colores resultan más similares a los de la imagen. Sin embargo, al contrario de las relaciones posicionales, no logra alcanzar la similitud esperada.
 
 El uso de colores a nivel de cuadro de segmentación podría resultar en la selección de colores con una mayor área en la imagen, lo cual no es completamente preciso. Un enfoque más adecuado para esta propuesta de colores sería utilizar las máscaras de segmentación de la imagen con un fondo transparente. Esto podría resultar en una pérdida de precisión en la generación del embedding, pero podría conducir a resultados más interesantes que los que CLIP puede manejar actualmente
 
  \subsection*{Observaciones}
 
-Como desarrollo principal se pretendia lograr ercuperar imagenes desde una consulta en lenguaje natural, pero, ademas se observa que la metodologia es viable para recuperar imagenes usando imagenes como consulta, teniendo en cuenta las relaciones posicionales de cada objeto en cuestion junto con sus conceptos agrupados en embeddings. El resultado de recuperar imagen imagen debe ser ajustado para lograr una recuperacion precisa, una vez se ajusten parametros para la recuperacion imagen-imagen, este sera posible de realizar.
+Como desarrollo principal, se buscaba lograr recuperar imágenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar imágenes utilizando otras imágenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en embeddings. El resultado de la recuperación de imágenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los parámetros para la recuperación imagen-imagen, será posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posciones y conceptos, consitituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
