@@ -213,7 +213,7 @@ ___________________________________________
 
 En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta "there are a dog in left of a cat". Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
 
-Por otro lado, encontramos resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3}, resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos, y el modelo de segmentación, SAM, genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
+Por otro lado, encontramos resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3}, resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos, y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
 
 Paralelamente a este ejemplo, se aprecia que la consulta "a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
@@ -418,9 +418,9 @@ La sección de detalles de implementación proporcionar\'a una explicación deta
 El proyecto se estructura en distintas secciones. Cada sección del proyecto tiene un propósito definido y se explica a continuación, destacando su uso, funciones y objetivos.
 
 \subsubsection{Modelos descriptivos}
- En la sección de modelos de descripción, se realiza la implementación de cada uno de los modelos integrados. Aquí también se pueden agregar los modelos futuros que se deseen incorporar. Actualmente, los modelos BLIP y BLIP2 est\'an integrados, cada uno de ellos carga su contenido desde la biblioteca Transformers de Hugging Face. La estructura común para cargar modelos desde esta biblioteca se muestra a continuación, tomando como ejemplo el modelo BLIP[\cite{huggingface2022blip}].
+ En la sección de modelos de descripción, se realiza la implementación de cada uno de los modelos integrados. Aquí también se pueden agregar los modelos futuros que se deseen incorporar. Actualmente, los modelos BLIP[\cite{huggingface2022blip}] y BLIP2[\cite{huggingface-blip2}] est\'an integrados, cada uno de ellos carga su contenido desde la biblioteca Transformers de Hugging Face. La estructura común para cargar modelos desde esta biblioteca se muestra a continuación, tomando como ejemplo el modelo BLIP[\cite{huggingface2022blip}].
 
-\begin{lstlisting}
+\begin{lstlisting} [language=Python]
 from transformers import BlipProcessor, BlipForConditionalGeneration
 BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
 BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
@@ -429,7 +429,7 @@ BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image
 La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face 1. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado PyTorch. 
 
 \subsubsection{Modelos de segmentaci\'on}
-De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM, que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.
+De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM[\cite{huggingface2022sam}], que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.
 
 La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo "box" o de tipo "mask". El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
 
@@ -438,7 +438,7 @@ En esta sección se integran los modelos de generación de embeddings. En el cas
 
 \subsubsection{Entorno(\textit{Environment})}
 En esta sección se concentra todo lo relacionado con el entorno. Desde aquí, se pueden realizar modificaciones en todos los par\'ametros del sistema que se desee. Por ejemplo, si se requiere que el código utilice descripciones en el c\'alculo de similitudes, se debe ajustar la variable correspondiente en la clase mencionada. En el presente ejemplo, se debe cambiar la variable \textit{USE-CAPTION-MODEL = False} a \textit{True} en la clase \textit{ImageEmbeddingEnv}. Adem\'as, se proporciona un ejemplo de una clase en el entorno, ya que este es el código potencialmente modificable.
-\begin{lstlisting}
+\begin{lstlisting}[language=Python]
     class ImageEmbeddingEnv:
     ''' 
     ## ImageEmbeddingEnv

@@ -1,13 +1,36 @@
 \chapter{Propuesta}\label{chapter:proposal}
-La propuesta para el sistema de recuperación de información de imágenes basado en contenido, comprende dos fases principales y una fase final de sistema de recuperaci\'on. La tarea de cada una de las fases, en conjunto, posibilita lograr el objetivo principal, obtener relevancia para un conjunto de im\'agenes, desde una consulta en forma de texto en lenguaje natural. Para vincular conceptos en un mismo espacio, ya sea imagen o texto, se emplean embeddings (vectores multi-dimensionales) como contextos. Sera posible establecer similitud entre cualquier cualquier concepto que se encuentre en forma de embedding, en este caso, contamos con conceptos como im\'agenes o conjunto de p\'ixeles, y texto, potencialmente, el lenguaje natural.
+La propuesta para el sistema de recuperación de información de imágenes basado en contenido, comprende dos etapas principales y una etapa final de sistema de recuperaci\'on. La tarea de cada una de las etapas, en conjunto, posibilita lograr el objetivo principal, obtener relevancia para un conjunto de im\'agenes, desde una consulta en forma de texto en lenguaje natural. Para vincular conceptos en un mismo espacio, ya sea imagen o texto, se emplean embeddings (vectores multi-dimensionales) como contextos. Sera posible establecer similitud entre cualquier cualquier concepto que se encuentre en forma de embedding, en este caso, contamos con conceptos como im\'agenes o conjunto de p\'ixeles, y texto, potencialmente, el lenguaje natural.
 
 \section{Etapas de la propuesta}
 
-La primera etapa de procesamiento y extracción de características de la imagen tiene lugar durante el tiempo de indexación. Las características de las imágenes se procesan y almacenan en forma de vectores en el momento de generación de los datos. Posteriormente, utilizando estos vectores, se procede a recuperar la información en tiempo real mediante métodos mucho más rápidos y eficientes que los utilizados en tiempo de indexación. Este análisis de la imagen incluye diversas opciones y permite la ajustabilidad de parámetros para variar los resultados de acuerdo a lo que se determine más adecuado para lograr una mejor similitud entre contextos.
+La primera etapa de procesamiento y extracción de características de la imagen tiene lugar durante el tiempo de indexación. Las características de las imágenes se procesan y almacenan en forma de vectores en el momento de generación de los datos. Posteriormente, utilizando estos vectores, se procede a recuperar la información en tiempo real mediante métodos mucho más rápidos y eficientes que los utilizados en tiempo de indexación. Este análisis de la imagen incluye diversas opciones y permite la ajustabilidad de parámetros para variar los resultados de acuerdo a lo que se determine más adecuado para lograr una mejor similitud entre contextos.(ver diagrama \ref{fig:etapa1})
 
-La segunda etapa se encarga de procesar el texto proporcionado por la consulta de los usuarios. Esta etapa está compuesta por una variante implementada, y dos variantes propuestas. Está diseñada para ser escalable, lo que permite mejorar significativamente el procesamiento del texto en futuras implementaciones. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Graphics/Image.drawio.png}
+\caption{Etapa de procesamiento de imagen.}
+\label{fig:etapa1}
+\end{figure}
 
-La tercera y \'ultima etapa, es la encargada de recuperar datos relevantes para un concepto entrado por consulta. Potencialmente, los datos ser\'an im\'agenes y las consultas texto, no obstante, dado el enfoque planteado, los datos y la entrada pueden pertenecer a cualquier concepto del cual sea posible obtener su embedding. Un ejemplo de ello es que, con el mismo sistema de evaluacion, se puede pasar por consulta tanto imágenes como textos, ya que ambos poseen embeddings como contexto.  
+La segunda etapa se encarga de procesar el texto proporcionado por la consulta de los usuarios. Esta etapa está compuesta por una variante implementada, y dos variantes propuestas. Está diseñada para ser escalable, lo que permite mejorar significativamente el procesamiento del texto en futuras implementaciones.(ver diagrama \ref{fig:etapa2})
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Graphics/Text.drawio.png}
+\caption{Etapa de procesamiento de texto.}
+\label{fig:etapa2}
+    \end{figure}
+
+La tercera y \'ultima etapa, es la encargada de recuperar datos relevantes para un concepto entrado por consulta. Potencialmente, los datos ser\'an im\'agenes y las consultas texto, no obstante, dado el enfoque planteado, los datos y la entrada pueden pertenecer a cualquier concepto del cual sea posible obtener su embedding. Un ejemplo de ello es que, con el mismo sistema de evaluacion, se puede pasar por consulta tanto imágenes como textos, ya que ambos poseen embeddings como contexto.(ver diagrama \ref{fig:etapa3})
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=80mm]{Graphics/SystemRetrieval.drawio.png}
+\caption{Etapa del sistema de recuperaci\'on.}
+\label{fig:etapa3}
+\end{figure}
+
 
 \section{Etapa de procesamiento de imagen}
 Esta etapa se divide en tres variantes que, a su vez, poseen una base común como metodología, cambiando solo los conceptos que se emplean en cada una de estas. La metodología principal está dada por una serie de procesos que serán explicados en esta sección. Para facilitar la comprencion de esta, se definen dos conceptos fundamenales.
@@ -18,7 +41,7 @@ El segundo concepto es \textbf{\textit{ImageSet}}. Un \textit{ImageSet} se defin
 
 Con estos dos conceptos aclarados, se pasa a definir la metodología base para el procesamiento de imágenes. Inicialmente, para una imagen dada, se define un \textit{ImageSet} que será la encargada de agrupar todas las características de la imagen en una relación, en un conjunto. Para la extracción de características y procesamiento de la imagen, esta pasa a ser proecsada y segmentada por un modelo de segmentaci\'on de im\'agenes. Este trabajo, en particular, utiliza el modelo de segmentación SAM (\textit{Segment Anything Model})[\cite{huggingface2022sam}]; dado la escalabilidad del código, este \'ultimo es perfectamente sustituíble por otro modelo que se encargue de realizar la tarea de sementaci\'on de imágenes. En trabajos futuros, sera posible hacer uso de modelos más potentes o más rápidos que el integrado actualmente. El tamaño de las segmentaciones, así como los hiperparámetros del modelo SAM, son modificables. En caso de ser necesario, los parametros del modelo pueden ajustarse a la problem\'atica que ha surgido.
 
-Terminada la tarea de segmentacion de imagen, el paso que sigue, es descartar las imágenes que resultan ser semejantes a muchos conceptos muy distantes entre sí, las imágenes que son relevantes y afectan por ello los resultados esperados. Este proceso de descartar imágenes relevantes es muy importante para que los modelos usados no generen conceptos relevantes que resultan perdida de precisi\'on general. Para realizar este proceso, se cuenta con un conjunto de conceptos muy distantes entre sí, un umbral a partir del cual se considera relevante una similitud, y un porcentaje que indica, cu\'ando una imagen posee una relevancia alta para el universo[NUM]. Ergo, una imagen sera descartada por alta relevancia, si resulta ser similar a una parte considerable del conjunto de conceptos distan mucho entre s\'i.
+Terminada la tarea de segmentacion de imagen, el paso que sigue, es descartar las imágenes que resultan ser semejantes a muchos conceptos muy distantes entre sí, las imágenes que son relevantes y afectan por ello los resultados esperados. Este proceso de descartar imágenes relevantes es muy importante para que los modelos usados no generen conceptos relevantes que resultan perdida de precisi\'on general. Para realizar este proceso, se cuenta con un conjunto de conceptos muy distantes entre sí, un umbral a partir del cual se considera relevante una similitud, y un porcentaje que indica, cu\'ando una imagen posee una relevancia alta para el universo. Ergo, una imagen sera descartada por alta relevancia, si resulta ser similar a una parte considerable del conjunto de conceptos distan mucho entre s\'i.
 Una vez concluido este proceso, se encontrará en el \textit{ImageSet} definido al inicio, todo conjunto de imágenes que la conforman, cada una de las cuales será una imagen que contendrá, en este momento, un identificador, una posición relativa al espacio general, y los límites superiores e inferiores de cada eje del plano. Estos dos últimos se obtienen como resultado de aplicar el modelo de segmentación. Cada una de estas imágenes, están ahora relacionadas como conjunto, teniendo esta relación, sus posiciones y sus límites. El siguiente paso es establecer las relaciones de vecindad posicionales para las imágenes entre s\'i.
 
 Para establecer esta relación, se cuentan con etiquetas, ya que se espera que la descripción posicional sea por texto, las etiquetas entonces están acorde a ello, están acorde a lo que se espera como lenguaje natural. Las etiquetas son las siguientes:
@@ -46,7 +69,7 @@ La definición de la similitud posicional ha sido un tema muy cuestionable, dado
 \label{fig:edificio}
 \end{figure}
 
-Un ejemplo claro de que la definición de posición está ajustada a la interpretación del observador sería una imagen en la que se ve un edificio. En \textit{Figura \ref{fig:edificio}} se podría decir que el edificio está a la derecha de la \textit{Image 5}[NUM], porque en realidad lo está, en su base coinciden. También se podría decir que el edificio está arriba, en la posición superior de la \textit{Image 5}. Y, evidentemente, el edificio parece estar en la zona superior derecha de la \textit{Image 5}. Se interpreta cada una de estas posiciones, definir que posici\'on es mejor sigue siendo un problema de interpretcion del observante.
+Un ejemplo claro de que la definición de posición está ajustada a la interpretación del observador sería una imagen en la que se ve un edificio. En \textit{Figura \ref{fig:edificio}} se podría decir que el edificio está a la derecha de la \textit{Image 5}[figura \ref{fig:edificio}], porque en realidad lo está, en su base coinciden. También se podría decir que el edificio está arriba, en la posición superior de la \textit{Image 5}. Y, evidentemente, el edificio parece estar en la zona superior derecha de la \textit{Image 5}. Se interpreta cada una de estas posiciones, definir que posici\'on es mejor sigue siendo un problema de interpretcion del observante.
 
 Como respuesta a esta ambiguedad se plantearon varias métricas o alternativas para poder decidir qué usar. Por ejemplo, la métrica que utiliza distancias angulares dudará que el edificio está completamente ubicado en su derecha, mientras que las otras interpretarán que hay un edificio en su derecha con una similitud perfecta. Las métricas usadas se definen a continuación.
 
@@ -127,12 +150,12 @@ Image3 Neighbords using weights_similarity
 \end{verbatim}
 La segunda alternativa no tiene en cuenta las dimensiones de las segmentaciones para calcular la posición relativa. En la primera métrica, si una imagen es más alta, est\'a más extendida en el eje $y$, entonces su ángulo relativo a otra varía según la escala de la misma.
 
-Teniendo definida entonces, la metodolog\'ia principal de esta fase. Sobre la base de esta, se proponen tres variantes para ser utilizadas como conceptos, entre los cuales, poder hallar relavancia mediante cálculos de similitud.
+Teniendo definida entonces, la metodolog\'ia principal de esta etapa. Sobre la base de esta, se proponen tres variantes para ser utilizadas como conceptos, entre los cuales, poder hallar relavancia mediante cálculos de similitud.
 
 \subsection{Uso de descripciones de las imágenes}
 Este método propone generar la descripción de la imagen en lenguaje natural, con el texto en lenguaje natural hallar la similitud directamente sería una opción válida, pero no es considerada en un primer momento porque un trabajo vago sire el lenguaje natural no nos garantiza una buena precisión al momento de hallar similitud. Como alternativa a esto se usan embeddings del texto, generados con modelos potentes de visión artificial que están diseñados para generar embeddings para texto. En el caso particular de este proyecto se usa el modelo CLIP[\cite{clip}]  que permite generar embeddings tanto desde texto como desde imágenes, vectores de 512 dimensiones. El proceso completo de esta metodología sería entonces generar descripciones desde la imagen, desde esta descripción generar un embedding y usar este último como contexto que se compare para hallar similitud entre este y los embeddings generados desde el texto de la consulta.
 
-Este proceso requiere de modelos diseñados para describir imágenes en lenguaje natural, modelos como son BLIP, BLIP2, LLaVA y GPT4-V. El proceso de generar descripciones suele ser lento según el modelo que se utilice, los modelos más potentes requieren de un hardware, de GPU, muy potente. En el caso de este proyecto se utiliza BLIP para generar descripciones, también cuenta con el modelo BLIP2 integrado pero no es utilizado debido a su exigencia de hardware y la insuficiencia del mismo.
+Este proceso requiere de modelos diseñados para describir imágenes en lenguaje natural, modelos como son BLIP[\cite{blip}], BLIP2[\cite{blip-2}], LLaVA[\cite{llava}] y GPT4-V.[\cite{gpt-4v}] El proceso de generar descripciones suele ser lento según el modelo que se utilice, los modelos más potentes requieren de un hardware, de GPU, muy potente. En el caso de este proyecto se utiliza BLIP[\cite{blip}] para generar descripciones, también cuenta con el modelo BLIP2 integrado pero no es utilizado debido a su exigencia de hardware y la insuficiencia del mismo.
 
 Como todo modelo de Machine Learning, estos modelos están sujetos a errores y tienen sus puntos fuertes y débiles. Por lo general, imágenes poco claras generan texto con concepto muy alejado a lo esperado, por ello se suelen perder algunas segmentaciones que se consideran importantes. No obstante la gran mayoría de las imágenes como estas suelen ser desechadas por tener mucha relevancia.
 
@@ -141,16 +164,16 @@ La segunda variante, es la que, actualmente, se usa como default en el proyecto,
 
 Esta variante implica tomar la imagen segmentada, procesarla en un modelo generador de embeddings, se usa CLIP, y usar este embedding como concepto para hallar similitud. Dado que CLIP[\cite{clip}] está diseñado para generar embeddings para imágenes y para textos en el mismo espacio, esto es muy útil para usar este mismo generador para ambas partes y poder comparar similitud entre ellos.
 
-El proceso de generar embeddings con CLIP[\cite{clip}] es considerablemente rápido, tardando, grosso modo, 20ms para generar el embedding de una imagen con una GPU v100; se puede decir que es aún más rápido en cuanto a su velocidad relativa a modelos generadores de descripciones, que suelen tardar varios segundos, dependiendo del modelo específico que se use. El proceso de generación de embeddings con CLIP[\cite{clip}] , si bien esta expuesto a fallos o salidas no esperadas, suele ser más preciso que utilizar un modelo generador de descripciones al alcance del hardware disponible o la disponibilidad del modelo, dado que los más potentes no son código abierto. Se desconoce que tan preciso puede ser usar el modelo GPT4-V, el cual es muy potente en este campo, como también se desconoce que tan preciso sería usar CLIP-2[\cite{clip2-paper}]para generar embeddings, ambos modelos son de código cerrado de OpenIA.
+El proceso de generar embeddings con CLIP[\cite{clip}] es considerablemente rápido, tardando, grosso modo, 20ms para generar el embedding de una imagen con una GPU v100; se puede decir que es aún más rápido en cuanto a su velocidad relativa a modelos generadores de descripciones, que suelen tardar varios segundos, dependiendo del modelo específico que se use. El proceso de generación de embeddings con CLIP[\cite{clip}] , si bien esta expuesto a fallos o salidas no esperadas, suele ser más preciso que utilizar un modelo generador de descripciones al alcance del hardware disponible o la disponibilidad del modelo, dado que los más potentes no son código abierto. Se desconoce que tan preciso puede ser usar el modelo GPT4-V[\cite{gpt-4v}], el cual es muy potente en este campo, como también se desconoce que tan preciso sería usar CLIP-2[\cite{clip2-paper}]para generar embeddings, ambos modelos son de código cerrado de OpenIA.
 
 \subsection{Combinaci\'on de ambos modelos}
 La tercera variante es combinar ambas variantes anteriores. De esta forma, el cálculo de la similitud sería entonces la media de la similitud por texto y la similitud por imágenes. Esta variante suele ser tan precisa como los modelos de descripción que se usan para su descripción, pero exige mucho hardware con el cual no se cuenta, se hace dif\'icil utilizar modelos más potentes que BLIP[\cite{blip}].
 
-\section{Fase de procesamiento de texto}
+\section{Etapa de procesamiento de texto}
 
-Esta fase consiste en extraer características del texto ingresado por consulta. Específicamente, características posicionales de los objetos en la imagen. Para ello, se desea que, para un texto de entrada en lenguaje natural, se genere una serie de textos parseados por posiciones descritas, equivalente a lo que se hace en la fase 1 con las imágenes. El proceso de obtener posiciones en el texto suele ser más engorroso que en el procesamiento de las imágenes, dado que en el caso de las imágenes, al ser segmentadas, cada una de estas segmentaciones posee la información posicional en el plano de sí misma. En el caso del lenguaje natural es necesario parsear lo que expresa un usuario en una consulta. La fase del procesamiento del texto de la consulta, a diferencia de la fase de procesamiento de la imagen, ocurre en tiempo real en el momento de la consulta, ergo debe ser considerablemente rápida para que cumpla con las expectativas.
+Esta etapa consiste en extraer características del texto ingresado por consulta. Específicamente, características posicionales de los objetos en la imagen. Para ello, se desea que, para un texto de entrada en lenguaje natural, se genere una serie de textos parseados por posiciones descritas, equivalente a lo que se hace en la etapa 1 con las imágenes. El proceso de obtener posiciones en el texto suele ser más engorroso que en el procesamiento de las imágenes, dado que en el caso de las imágenes, al ser segmentadas, cada una de estas segmentaciones posee la información posicional en el plano de sí misma. En el caso del lenguaje natural es necesario parsear lo que expresa un usuario en una consulta. La etapa del procesamiento del texto de la consulta, a diferencia de la etapa de procesamiento de la imagen, ocurre en tiempo real en el momento de la consulta, ergo debe ser considerablemente rápida para que cumpla con las expectativas.
 
-Al igual que en la fase de procesamiento de imágenes, aquí también se definirán dos conceptos fundamentales para comprender la metodología utilizada.
+Al igual que en la etapa de procesamiento de imágenes, aquí también se definirán dos conceptos fundamentales para comprender la metodología utilizada.
 
 El primero es el concepto de \textit{\textbf{Text}}. Un \textit{Text} se define como un conjunto de características que se extraen de un texto, las cuales son: un string, un embedding, una posición y una serie de vecinos por posición relativos a este. Los vecinos hacen referencia a la cercanía entre conceptos. Por ejemplo, para el texto en lenguaje natural \textit{In top right side of the image there are a dog next to a cat sleeping on a couch}, se espera un \textit{Text} de la siguiente forma:
 
@@ -164,7 +187,7 @@ Para mejor comprension del lector, se debe asumir que las posiciones van desde $
 
 El segundo concepto es \textit{\textbf{TextSet}}. Un \textit{TextSet} se define como un conjunto de \textit{Texts} donde cada uno de representan subdivisiones de un \'unico texto general, además, también posee un \textit{Text} que hace referencia al texto original. En pocas palabras, \textit{TextSet} es el conjunto de textos que conforman el texto original, separados por puntos o por posiciones indicadas con lenguaje natural.
 
-Para esta fase de porcesamiento de lenguaje se plantean 3 variantes posibles, de las cuales, una ha sido implementada.
+Para esta etapa de procesamiento de lenguaje se plantean 3 variantes posibles, de las cuales, una ha sido implementada.
 
 \subsubsection{Análisis sintáctico y parser}
 La variante principal e implementada en el proyecto es el uso de un parser para lenguaje natural con el fin de parsear contenido que haga referencia a relaciones posicionales. El lenguaje natural es ambiguo, un parser diseñado sobre este no será perfecto, pero puede abarcar una gran parte de las estructuras gramaticales que forman, de alguna manera, la definición de posiciones a través de texto.
@@ -333,7 +356,7 @@ Las primeras 6 capas del modelo están basadas en la documentación oficial de T
 
 \subsection{Etapa de cálculo de similitud y recuperación de información}
 
-Después de las dos fases anteriores, que implican el procesamiento de imágenes durante la indexación y el procesamiento de texto en tiempo real, se procede a calcular la similitud entre el texto proporcionado en la consulta y las imágenes de la base de datos.
+Después de las dos etapas anteriores, que implican el procesamiento de imágenes durante la indexación y el procesamiento de texto en tiempo real, se procede a calcular la similitud entre el texto proporcionado en la consulta y las imágenes de la base de datos.
 
 Para calcular la similitud entre un \textit{Text} y una \textit{Image}, se siguen los siguientes pasos:
 \begin{itemize}
