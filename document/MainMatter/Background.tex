@@ -1,1 +1,30 @@
 \chapter{Estado del Arte}\label{chapter:state-of-the-art}
+
+
+\section{Investigaciones basadas en uso de CLIP}
+
+La recuperación de imágenes ha experimentado avances significativos en los últimos años, propulsados por el desarrollo de tecnologías de aprendizaje profundo. Un aspecto clave en este campo es la integración de la comprensión del lenguaje y las imágenes. El modelo CLIP (\textit{Contrastive Language–Image Pretraining})[\cite{clip-paper}] es un ejemplo destacado de esto, ya que permite a las máquinas aprender a entender tanto el lenguaje como las imágenes. Este modelo ha demostrado ser eficaz en diversas tareas, incluyendo la detección de objetos en imágenes y la recuperación de imágenes basada en descripciones textuales.
+
+El modelo CLIP[\cite{clip}] se presenta en el artículo  \textit{CLIP: Connecting text and images}[\cite{clip}] de \textit{OpenAI}, donde se introduce una red neuronal que aprende visualmente conceptos a partir de supervisión de lenguaje natural. CLIP[\cite{clip}] puede ser aplicado a cualquier imagen o texto, demostrando una capacidad similar a las capacidades \textit{zero-shot} de GPT-2[\cite{gpt2}] y GPT-3[\cite{gpt3}].
+
+Uno de los principales desafíos en la recuperación de imágenes es la falta de correspondencia exacta entre las descripciones textuales y las imágenes. Para abordar este problema, se han desarrollado técnicas de recuperación de imágenes basadas en características, como la utilizada en el artículo \textit{Effective Conditioned and Composed Image Retrieval: Combining CLIP-Based Features}[\cite{Baldrati2022}]. Este enfoque utiliza las características derivadas de CLIP[\cite{clip}] para mejorar la precisión de la recuperación de imágenes.
+
+En el artículo \textit{Text-to-Image and Image-to-Image Search Using CLIP}[\cite{keita2023clip}], Zoumana Keita presenta una técnica innovadora para la recuperación de imágenes que utiliza CLIP. En lugar de un enfoque tradicional de recuperación de imágenes basado en características, Keita propone un método que utiliza un dataframe local como índice de vectores. Cuando el usuario proporciona un texto o una imagen como criterio de búsqueda, el modelo realiza una búsqueda de texto a imagen por defecto. Realiza una similitud de coseno entre cada vector de imagen y el vector de entrada del usuario, ordenando los resultados en función de la puntuación de similitud en orden descendente y devolviendo las imágenes más similares, excluyendo la primera que corresponde a la consulta misma.
+
+\section{Investigaciones de detección de objetos y segmentaciones}
+
+La detección de objetos en imágenes es otro aspecto crucial en la recuperación de imágenes. La detección de objetos permite identificar y localizar objetos específicos en una imagen, lo cual es fundamental para muchas aplicaciones de recuperación de imágenes. Una técnica comúnmente utilizada para la detección de objetos es el uso de cajas(\textit{boxs}) delimitadoras, que definen un área rectangular alrededor de cada objeto detectado. Esta técnica se puede combinar con las características de CLIP[\cite{clip}] para mejorar la precisión de la detección de objetos.
+
+La combinación de modelos de segmentación y extracción de características de la imagen ha sido un enfoque común en el campo de la visión artificial. Este enfoque implica dividir una imagen en partes más pequeñas y manejables, identificar características clave en estas partes y luego utilizar estas características para realizar tareas como la clasificación de imágenes, la localización de objetos y la detección de objetos.
+
+En el artículo \textit{Segment Anything}[\cite{sam-paper}] de \textit{Meta AI}, se presenta un modelo llamado \textit{Segment Anything (SAM)} que se especializa en la segmentación de imágenes. El modelo SAM genera múltiples mapas binarios para cada imagen.
+
+\section{Investigaciones basadas en recuperaci\'on de im\'agenes}
+
+La mayoría de los modelos de recuperación de imágenes se fundamentan en el principio de recuperar de imagen a imagen. Sin embargo, existen modelos que, basándose en los anteriores y en modelos de lenguaje, utilizan la combinación de ambas entradas para recuperar información. En este contexto, el artículo \textit{Sentence-level Prompts Benefit Composed Image Retrieval}[\cite{sentence-level}] de \textit{Yang Bai et al.} propone una estrategia innovadora para la recuperación de imágenes compuestas utilizando indicaciones a nivel de oración.
+
+La recuperación de imágenes compuestas es un proceso que busca recuperar imágenes específicas utilizando una consulta que incorpora tanto una imagen de referencia como una descripción relativa. A pesar de que muchos modelos de CIR (\textit{Composed Image Retrieval}) existentes adoptan la estrategia de fusión tardía para combinar las características visuales y lingüísticas, este artículo sugiere una alternativa diferente.
+
+Se han sugerido varios enfoques para generar un token de palabra a partir de la imagen de referencia, que luego se integra en la descripción relativa para la CIR. En contraste, los autores del artículo proponen aprovechar los modelos V-L (\textit{Vision - Language}) preentrenados, como BLIP-2 (\textit{Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models})[\cite{blip-2}], para generar indicaciones a nivel de oración.
+
+Este enfoque innovador implica la concatenación de la indicación a nivel de oración aprendida con la descripción relativa. De esta manera, se pueden utilizar de manera eficaz los modelos existentes de recuperación de imágenes basados en texto para mejorar el rendimiento de la CIR. Así, este método propone una forma elegante y efectiva de mejorar la precisión y la eficacia de la recuperación de imágenes compuestas.

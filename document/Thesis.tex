@@ -1,4 +1,7 @@
 \documentclass[12pt,oneside]{uhthesis}
+\lstset{language=Python}
+\usepackage{float}
+\usepackage{fancyvrb}
 \usepackage{subfigure}
 \usepackage[ruled,lined,linesnumbered,titlenumbered,algochapter,spanish,onelanguage]{algorithm2e}
 \usepackage{amsmath}
@@ -6,6 +9,7 @@
 \usepackage{amsbsy}
 \usepackage{caption,booktabs}
 \captionsetup{ justification = centering }
+\usepackage{adjustbox}
 %\usepackage{mathpazo}
 \usepackage{float}
 \setlength{\marginparwidth}{2cm}
@@ -49,14 +53,16 @@
 
 \lstset{style=mystyle}
 
-\title{Título de la tesis}
-\author{\\\vspace{0.25cm}Nombre del autor}
-\advisor{\\\vspace{0.25cm}Nombre del primer tutor\\\vspace{0.2cm}Nombre del segundo tutor}
-\degree{Licenciado en (Matemática o Ciencia de la Computación)}
+
+\title{Recuperaci\'on de im\'agenes usando incrustaciones multimodales}
+\author{\\\vspace{0.25cm}Ra\'ul Beltr\'an G\'omez}
+\advisor{\\\vspace{0.25cm}Dr. Yudivian Almeida Cruz}
+\degree{Licenciado en Ciencia de la Computación}
 \faculty{Facultad de Matemática y Computación}
-\date{Fecha\\\vspace{0.25cm}\href{https://github.com/username/repo}{github.com/username/repo}}
+\date{Enero de 2024\\\vspace{0.25cm}\href{https://github.com/username/repo}{https://github.com/rb58853/ML-RSI-Images}}
 \logo{Graphics/uhlogo}
 \makenomenclature
+
 
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 \newcommand{\diff}[1]{\ensuremath{\mathrm{d}#1}}
@@ -72,8 +78,8 @@
 \newcommand{\minn}[1]{\min\left\{ #1 \right\} }
 \newcommand{\lldpcf}{1.25}
 \newcommand{\nnorm}[1]{\left\lvert #1 \right\rvert }
-\renewcommand{\lstlistingname}{Ejemplo de código}
-\renewcommand{\lstlistlistingname}{Ejemplos de código}
+%\renewcommand{\lstlistingname}{Ejemplo de código}
+%\renewcommand{\lstlistlistingname}{Ejemplos de código}
 
 \begin{document}
 
