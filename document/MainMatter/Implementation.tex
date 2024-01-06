@@ -1,5 +1,73 @@
 \chapter{Detalles de Implementación y Experimentos}\label{chapter:implementation}
 
+
+\section{Detalles de implementaci\'on}
+La sección de detalles de implementación proporcionar\'a una explicación detallada sobre la arquitectura del proyecto. Esta explicación cubrir\'a aspectos como la escalabilidad del sistema y los detalles específicos de implementación que son relevantes para el proyecto.
+
+\subsection{Estructura}
+El proyecto se estructura en distintas secciones. Cada una de estas tiene un propósito definido y se explica a continuación, destacando su uso, funciones y objetivos.
+
+\subsubsection{Modelos descriptivos}
+ En la sección de modelos de descripción, se realiza la implementación de cada uno de los modelos integrados. Aquí también se pueden agregar los modelos futuros que se deseen incorporar. Actualmente, los modelos BLIP[\cite{huggingface2022blip}] y BLIP2[\cite{huggingface-blip2}] est\'an integrados, cada uno de ellos carga su contenido desde la biblioteca \textit{Transformers de Hugging Face}. La estructura común para cargar modelos desde esta biblioteca se muestra a continuación, tomando como ejemplo el modelo BLIP[\cite{huggingface2022blip}].
+
+\begin{lstlisting} [language=Python]
+from transformers import BlipProcessor, BlipForConditionalGeneration
+BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
+\end{lstlisting}
+
+La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado \textit{PyTorch}. 
+
+\subsubsection{Modelos de segmentaci\'on}
+De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM[\cite{huggingface2022sam}], que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.
+
+La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo "box" o de tipo "mask". El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
+
+\subsubsection{Generadores de Embeddings}
+En esta sección se integran los modelos de generación de embeddings. En el caso particular de este trabajo, se ha integrado el modelo CLIP[\cite{git-clip}]. Al igual que en los casos anteriores, si se necesita integrar otros modelos de generación de embeddings, debe hacerse dentro de esta carpeta.
+
+\subsubsection{Entorno(\textit{Environment})}
+En esta sección se concentra todo lo relacionado con el entorno. Desde aquí, se pueden realizar modificaciones en todos los par\'ametros del sistema que se desee. Por ejemplo, si se requiere que el código utilice descripciones en el c\'alculo de similitudes, se debe ajustar la variable correspondiente en la clase mencionada. En el presente ejemplo, se debe cambiar la variable \textit{USE-CAPTION-MODEL = False} a \textit{True} en la clase \textit{ImageEnvironment}. Adem\'as, se proporciona un ejemplo de una clase en el entorno, ya que este es el código potencialmente modificable.
+
+\begin{lstlisting}[language=Python]
+class ImageEnvironment:
+    ### Variables 
+    - `USE_CAPION_MODEL` Indica que se usará un modelo de descripciones de imágenes
+    - `CAPTION_MODEL` Este es el modelo que se usara para describir la imagen
+    - `CAPTION_IMPORTANCE` Importancia de la descripción, define que tan importante será la descripción de una imagen para la similitud. Valor=1 indica que tiene igual imporatancia que la imagen
+    - `KEY_IMAGES`: Esto es el tipo de imagen que usará como principal. (box or mask).
+    ### Funciones
+    - `max_similarity()`: Devuelve la máxima similitud que se puede alcanzar en la distancia entre dos imágenes. 
+    '''
+
+    USE_CAPION_MODEL = False
+    CAPTION_MODEL =BLIP
+    CAPTION_IMPORTANCE = 1
+    KEY_IMAGES = 'box'
+
+    def max_similarity():
+        return ImageEmbeddingEnv.MAX_DISTANCE/ImageEmbeddingEnv.POS_UMBRAL
+\end{lstlisting}
+
+\subsubsection{Caracter\'istcas(\textit{features})}
+Esta es la sección m\'as crucial, donde se implementan las clases que abordan los conceptos fundamentales del trabajo: Image, ImageSet, Text, TextSet. Idealmente, esta clase no debería ser modificada, a menos que se desee asignar nuevas funcionalidades a estas clases. Cada clase tiene sus propios procesos internos, pero su principal objetivo es almacenar características en una clase determinada. 
+La clase Image posee una subclase que se encarga exclusivamente de crear funciones para el c\'alculo de similitudes de vecindad. El resto de los componentes de ambas clases dependen únicamente de procesos externos, no implementados dentro de la clase en sí. Por ejemplo, el proceso de segmentación de im\'agenes y el an\'alisis sint\'actico del texto se llevan a cabo en módulos específicos encargados de esta función en particular.
+
+\subsubsection{Gram\'atica}
+En esta sección se encuentran los tokenizadores y analizadores sint\'acticos que procesan las consultas en forma de texto. Cada uno de estos est\'a diseñado para ser escalable, lo que permite un futuro mejor procesamiento y comprensión del lenguaje.
+
+\subsubsection{Recuperaci\'on de informaci\'on}
+En esta sección se ubica el motor de recuperación de información y la base de datos. Ambas son clases que implementan el comportamiento necesario para recuperar y guardar la información. El sistema de recuperación tiene dos funciones principales: una función de ranking y una función de búsqueda. La primera se enfoca en calcular la similitud entre una consulta y todas las im\'agenes de la base de datos utilizando la distancia del coseno. Se establece un umbral de tamaño m\'aximo del ranking y se guardan las n mejores im\'agenes. Luego, las im\'agenes en ese ranking son comparadas con la consulta utilizando el algoritmo principal propuesto. Este proceso se divide en dos partes, ya que calcular la similitud del coseno es considerablemente m\'as r\'apido que el c\'alculo utilizando el algoritmo principal. Para calcular la similitud de 10,000 im\'agenes, el algoritmo principal tarda, aproximadamente, 42 segundos usando una GPU v100, mientras que la similitud por coseno tarda ese tiempo para 1,000,000 de im\'agenes.
+
+La clase data tiene como principal objetivo acumular la información, guardarla en disco y cargarla desde el disco. Para ello cuenta con funciones para guardar y cargar desde una dirección, así como funciones para agregarle nuevos datos desde el código y, teniendo estos, poder guardarlos. La información guardada y cargada por la base de datos ser\'a, de cada imagen, el embedding, la posición, el nombre, referencia a los vecinos y similitud de cercanía a estos, y límites de una imagen.
+
+\subsubsection{Similitud}
+En esta sección se implementan todas las funciones de similitud que se utilizar\'an para el c\'alculo. Si se desea agregar una nueva función de similitud, debe hacerse en esta clase.
+
+\subsubsection{Main} 
+Finalmente, se llega a la función global, desde la cual se utilizan los dem\'as módulos. Esta sección est\'a contenida por un archivo \textit{.ipynb} desde el cual se llama y ejecuta cada función deseada. El uso de un \textit{notebook} es debido a la necesidad de ejecutar el proyecto en una m\'aquina virtual de Google Colab.
+
+
 \section{Experimentos}
 El objetivo principal de la propuesta presentada es mejorar la similitud entre textos m\'as descriptivos y las im\'agenes correspondientes que contienen la mayor cantidad de detalles descritos en el texto. Para lograr esto, se han implementado tres variantes distintas que se centran en recuperar im\'agenes para descripciones posicionales en la consulta.
 
@@ -213,9 +281,9 @@ ___________________________________________
 
 En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta "there are a dog in left of a cat". Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
 
-Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3}, resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos, y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
+Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3} resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
 
-Paralelamente a este ejemplo, se aprecia que la consulta "a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
+Paralelamente a este ejemplo, se aprecia que la consulta " a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
 El resultado de la última consulta indica que no se encontró, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "mujer", por lo tanto no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
 
@@ -323,7 +391,7 @@ image_15: 0.5891194603734591
 
 \end{verbatim}
 
-En la consulta \textit{"a cat on left side of dog"}, se esperaría que la imagen de la figura \ref{fig:13} sea m\'as relevante que la imagen de la figura \ref{fig:14}. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se puede probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
+En la consulta \textit{" a cat on left side of dog"}, se esperaría que la imagen de la figura \ref{fig:13} sea m\'as relevante que la imagen de la figura \ref{fig:14}. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se puede probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
 
 Por otro lado, cuando se trabaja trabajando con conceptos distintos como rosas y mesas, la diferencia de similitud es notable en cuanto a los resultados recuperados.
 
@@ -409,79 +477,4 @@ SIMILARITY
 \subsection{Observaciones}
 Como desarrollo principal, se buscaba lograr recuperar im\'agenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar im\'agenes utilizando otras im\'agenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en embeddings. El resultado de la recuperación de im\'agenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los par\'ametros para la recuperación imagen-imagen, ser\'a posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posciones y conceptos, consitituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
 
-
-
-\section{Detalles de implementaci\'on}
-La sección de detalles de implementación proporcionar\'a una explicación detallada sobre la arquitectura del proyecto. Esta explicación cubrir\'a aspectos como la escalabilidad del sistema y los detalles específicos de implementación que son relevantes para el proyecto.
-
-\subsection{Estructura}
-El proyecto se estructura en distintas secciones. Cada sección del proyecto tiene un propósito definido y se explica a continuación, destacando su uso, funciones y objetivos.
-
-\subsubsection{Modelos descriptivos}
- En la sección de modelos de descripción, se realiza la implementación de cada uno de los modelos integrados. Aquí también se pueden agregar los modelos futuros que se deseen incorporar. Actualmente, los modelos BLIP[\cite{huggingface2022blip}] y BLIP2[\cite{huggingface-blip2}] est\'an integrados, cada uno de ellos carga su contenido desde la biblioteca Transformers de Hugging Face. La estructura común para cargar modelos desde esta biblioteca se muestra a continuación, tomando como ejemplo el modelo BLIP[\cite{huggingface2022blip}].
-
-\begin{lstlisting} [language=Python]
-from transformers import BlipProcessor, BlipForConditionalGeneration
-BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
-\end{lstlisting}
-
-La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face 1. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado \textit{PyTorch}. 
-
-\subsubsection{Modelos de segmentaci\'on}
-De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM[\cite{huggingface2022sam}], que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.
-
-La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo "box" o de tipo "mask". El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
-
-\subsubsection{Generadores de Embeddings}
-En esta sección se integran los modelos de generación de embeddings. En el caso particular de este trabajo, se ha integrado el modelo CLIP[\cite{clip}]. Al igual que en los casos anteriores, si se necesita integrar otros modelos de generación de embeddings, debe hacerse dentro de esta carpeta.
-
-\subsubsection{Entorno(\textit{Environment})}
-En esta sección se concentra todo lo relacionado con el entorno. Desde aquí, se pueden realizar modificaciones en todos los par\'ametros del sistema que se desee. Por ejemplo, si se requiere que el código utilice descripciones en el c\'alculo de similitudes, se debe ajustar la variable correspondiente en la clase mencionada. En el presente ejemplo, se debe cambiar la variable \textit{USE-CAPTION-MODEL = False} a \textit{True} en la clase \textit{ImageEmbeddingEnv}. Adem\'as, se proporciona un ejemplo de una clase en el entorno, ya que este es el código potencialmente modificable.
-\begin{lstlisting}[language=Python]
-    class ImageEmbeddingEnv:
-    ''' 
-    ## ImageEmbeddingEnv
-    ### Variables 
-    - `USE_CAPION_MODEL` Indica que se usara un modelo de descripciones de im\'agenes para usar tambien emedding de la descrpcion en la imagen al calcular similitud
-    - `CAPTION_MODEL` Este es el modelo que se usara para describir la imagen
-    - `CAPTION_IMPORTANCE` Importancia del caption, define que tan importante sera el caption de una imagen para la similitud. `=1` indica que tiene igual imporatancia que la imagen
-    - `POS_UMBRAL`: Importancia dada a la distancia entre las posiciones de las im\'agenes, mientras menor valor mayor importancia se le da a las posiciones
-    - `PRIMARY_POW`: Elevacion a la ptencia del eje principal a la hora de calcular distancias
-    - `SECUNDARY_POW`: Elevacion a la ptencia del eje no principal a la hora de calcular distancias
-    - `MAX_DISTANCE`: Distancia maxima que puede haber entre dos im\'agenes para ser consideradas vecinas
-    - `KEY_IMAGES`: Esto es el tipo de imagen que usara como principal. (box or mask).
-    ### Funciones
-    - `max_similarity()`: Devuelve la maxima similitud que se puede alcanzar en la distancia entre dos im\'agenes. 
-    '''
-
-    USE_CAPION_MODEL = False
-    CAPTION_MODEL =BLIP
-    CAPTION_IMPORTANCE = 1
-    PRIMARY_POW = 1.2 
-    SECUNDARY_POW = 0.7 
-    MAX_DISTANCE = 1 
-    POS_UMBRAL = 0.85
-    KEY_IMAGES = 'box'
-
-    def max_similarity():
-        return ImageEmbeddingEnv.MAX_DISTANCE/ImageEmbeddingEnv.POS_UMBRAL
-\end{lstlisting}
-
-\subsubsection{Caracter\'istcas(\textit{features})}
-Esta es la sección m\'as crucial, donde se implementan las clases que abordan los conceptos fundamentales del trabajo: Image, ImageSet, Text, TextSet. Idealmente, esta clase no debería ser modificada, a menos que se desee asignar nuevas funcionalidades a estas clases. Cada clase tiene sus propios procesos internos, pero su principal objetivo es almacenar características en una clase determinada. La clase Image es una subclase que se encarga exclusivamente de crear funciones para el c\'alculo de similitudes de vecindad. El resto de los componentes de ambas clases dependen únicamente de procesos externos, no implementados dentro de la clase en sí. Por ejemplo, el proceso de segmentación de im\'agenes y el an\'alisis sint\'actico del texto se llevan a cabo en módulos específicos encargados de esta función en particular.
-
-\subsubsection{Gram\'atica}
-En esta sección se encuentran los tokenizadores y analizadores sint\'acticos que procesan las consultas en forma de texto. Cada uno de estos est\'a diseñado para ser escalable, lo que permite un futuro mejor procesamiento y comprensión del lenguaje.
-
-\subsubsection{Recuperaci\'on de informaci\'on}
-En esta sección se ubica el motor de recuperación de información y la base de datos. Ambas son clases que implementan el comportamiento necesario para recuperar y guardar la información. El sistema de recuperación tiene dos funciones principales: una función de ranking y una función de búsqueda. La primera se enfoca en calcular la similitud entre una consulta y todas las im\'agenes de la base de datos utilizando la distancia del coseno. Se establece un umbral de tamaño m\'aximo del ranking y se guardan las n mejores im\'agenes. Luego, las im\'agenes en ese ranking son comparadas con la consulta utilizando el algoritmo principal propuesto. Este proceso se divide en dos partes, ya que calcular la similitud del coseno es considerablemente m\'as r\'apida que el c\'alculo utilizando el algoritmo principal. Para calcular la similitud de 10,000 im\'agenes, el algoritmo principal tarda, aproximadamente, 42 segundos usando una GPU v100, mientras que la similitud por coseno tarda ese tiempo para 1,000,000 de im\'agenes.
-
-La clase data tiene como principal objetivo acumular la información, guardarla en disco y cargarla desde el disco. Para ello cuenta con funciones para guardar y cargar desde una dirección, así como funciones para agregarle nuevos datos desde el código y, teniendo estos, poder guardarlos. La información guardada y cargada por la base de datos ser\'a, de cada imagen, el embedding, la posición, el nombre, referencia a los vecinos y similitud de cercanía a estos, y límites de una imagen
-
-\subsubsection{Similitud}
-En esta sección se implementan todas las funciones de similitud que se utilizar\'an para el c\'alculo. Si se desea agregar una nueva función de similitud, debe hacerse en esta clase.
-
-\subsubsection{Main} 
-Finalmente, se llega a la función global, desde la cual se utilizan los dem\'as módulos. Esta sección est\'a contenida por un archivo \textit{.ipynb} desde el cual se llama y ejecuta cada función deseada. El uso de un notebook es debido a la necesidad de ejecutar el proyecto en una m\'aquina virtual de Google Colab.
 
