@@ -47,17 +47,22 @@ El objetivo es desarrollar un sistema de recuperación de imágenes que pueda ge
 
 \subsection*{Objetivo general}
 
-El objetivo de este trabajo consiste en desarrollar un sistema automatizado extracci\'on de caracter\'isticas de im\'agenes para procesarlas, y un sistema de recuperaci\'on altamente preciso que utilice dichas caracter\'iticas como informaci\'on para crear el proceso de recuperaci\'on, empleando modelos de aprendizaje autom\'atico. El prop\'osito es lograr la recuperaci\'on de la imagen m\'as adecuada mediante consultas que cuenten con descripciones sumamente precisas. Se prestar\'a una atenci\'on especial atenci\'on a la descripcion de posiciones de los objetos.
+El objetivo de este trabajo consiste en desarrollar un sistema automatizado de extracci\'on caracter\'isticas de im\'agenes para procesarlas, y un sistema de recuperaci\'on altamente preciso que utilice dichas caracter\'iticas como informaci\'on para crear el proceso de recuperaci\'on, empleando modelos de aprendizaje autom\'atico. El prop\'osito es lograr la recuperaci\'on de la imagen m\'as adecuada mediante consultas que cuenten con descripciones sumamente precisas. Se prestar\'a una atenci\'on especial atenci\'on a la descripci\'on de posiciones de los objetos.
+
+Como caracter\'isticas fundamentales de las im\'agenes, se proceder\'a a extrar informaci\'on posicional de la misma, y embeddings multimodales que sean capaces de asociar y comprender texto e im\'agenes en un mismo espacio. Tambi\'en se adoptar\'a como alternativa extraer caracter\'isticas textuales, generando descripciones espec\'ificas utilizando modelos entrenados en esta tarea. Analizando en cada caso las mejores alternativas para, al final, decidir utilizar una de estas como sistema por defecto. Otro objetivo fundamental del trabajo es conseguir una escalabilidad adecuada para poder agregar nuevos modelos y funcionalidades en el futuro sin necesidad de alterar el c\'odigo fuente. 
+
 
 \subsection*{Objetivos espec\'ificos}
 
 \begin{itemize}
+\item Realizar un an\'alisis exhaustivo de los trabajos anteriores en este campo, que constituir\'a el c\'apitulo de estado del arte \ref{chapter:state-of-the-art}   
 \item Extraer incrustaciones (\textit{embeddings}) de las im\'agenes utilizando modelos de aprendizaje de m\'aquinas previamente entrenados.
 \item Emplear modelos de aprendizaje autom\'atico entrenados con extensas cantidades de datos especializados en la descripci\'on de im\'agenes como una variante de de caracter\'isticas de la imagen.
 \item Dise\~nar una arquitectura escalable que permita la incorporaci\'on de nuevos modelos de visi\'on artificial a medida que este campo se expande con el tiempo.
 \item Utilizar modelos de segmentaci\'on de im\'agenes para obtener descripciones m\'as detalladas, analizando la imagen no solo en su totalidad, sino tambi\'en por segmentos.
 \item Procesar las descripciones finales proporcionadas para crear un sistema de tokens que se ajuste al formato de consultas m\'as esperadas, con el objetivo de lograr una recuperaci\'on precisa de la informaci\'on.
-\item Desarrollar un sistema \'optimo de recuperaci\'on de informaci\'on para recuperar las im\'agenes almacenadas en la base de datos correspondiente a las im\'agenes procesadas.
+\item Desarrollar un sistema de recuperaci\'on de informaci\'on para recuperar las im\'agenes almacenadas en la base de datos correspondiente a las im\'agenes procesadas.
+\item Validar las propuestas planteadas con resultados experimentales, as\'i como seleccionar, de cada una de ellas la mejor para el momento actual. Adem\'as, plantear como se comporta cada una de las mismas y como podr\'ian mejorar en futuros trabajos.
 \end{itemize}
 
 \section*{Organizaci\'on}
@@ -69,4 +74,4 @@ El cap\'itulo 3 secci\'on 1, se enfoca en la comparaci\'on de diversas solucione
 
 En el cap\'itulo 3, seccion 2, se recopilan los detalles de la implementaci\'on y se abordan los desaf\'ios surgidos debido a la limitaci\'on de hardware y acceso a informaci\'on.
 
-Finalmente, en el cap\'itulo 6 se presentan las conclusiones derivadas de la investigaci\'on llevada a cabo.
+Finalmente, en el \'ultimo cap\'itulo se presentan las conclusiones derivadas de la investigaci\'on llevada a cabo.
