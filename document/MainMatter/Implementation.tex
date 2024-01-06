@@ -23,8 +23,8 @@ De manera similar a la sección de modelos descriptivos, existe una sección ded
 
 La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo "box" o de tipo "mask". El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
 
-\subsubsection{Generadores de Embeddings}
-En esta sección se integran los modelos de generación de embeddings. En el caso particular de este trabajo, se ha integrado el modelo CLIP[\cite{git-clip}]. Al igual que en los casos anteriores, si se necesita integrar otros modelos de generación de embeddings, debe hacerse dentro de esta carpeta.
+\subsubsection{Generadores de \textit{embeddings}}
+En esta sección se integran los modelos de generación de \textit{embeddings}. En el caso particular de este trabajo, se ha integrado el modelo CLIP[\cite{git-clip}]. Al igual que en los casos anteriores, si se necesita integrar otros modelos de generación de \textit{embeddings}, debe hacerse dentro de esta carpeta.
 
 \subsubsection{Entorno(\textit{Environment})}
 En esta sección se concentra todo lo relacionado con el entorno. Desde aquí, se pueden realizar modificaciones en todos los par\'ametros del sistema que se desee. Por ejemplo, si se requiere que el código utilice descripciones en el c\'alculo de similitudes, se debe ajustar la variable correspondiente en la clase mencionada. En el presente ejemplo, se debe cambiar la variable \textit{USE-CAPTION-MODEL = False} a \textit{True} en la clase \textit{ImageEnvironment}. Adem\'as, se proporciona un ejemplo de una clase en el entorno, ya que este es el código potencialmente modificable.
@@ -52,7 +52,7 @@ class ImageEnvironment:
 
 \subsubsection{Caracter\'isticas(\textit{features})}
 Esta es la sección m\'as crucial, donde se implementan las clases que abordan los conceptos fundamentales del trabajo: Image, ImageSet, Text, TextSet. Idealmente, esta clase no debería ser modificada, a menos que se desee asignar nuevas funcionalidades a estas clases. Cada clase tiene sus propios procesos internos, pero su principal objetivo es almacenar características en una clase determinada. 
-La clase Image posee una subclase que se encarga exclusivamente de crear funciones para el c\'alculo de similitudes de vecindad. El resto de los componentes de ambas clases dependen únicamente de procesos externos, no implementados dentro de la clase en sí. Por ejemplo, el proceso de segmentación de im\'agenes y el an\'alisis sint\'actico del texto se llevan a cabo en módulos específicos encargados de esta función en particular.
+La clase \textit{image } posee una subclase que se encarga exclusivamente de crear funciones para el c\'alculo de similitudes de vecindad. El resto de los componentes de ambas clases dependen únicamente de procesos externos, no implementados dentro de la clase en sí. Por ejemplo, el proceso de segmentación de im\'agenes y el an\'alisis sint\'actico del texto se llevan a cabo en módulos específicos encargados de esta función en particular.
 
 \subsubsection{Gram\'atica}
 En esta sección se encuentran los tokenizadores y analizadores sint\'acticos que procesan las consultas en forma de texto. Cada uno de estos est\'a diseñado para ser escalable, lo que permite un futuro mejor procesamiento y comprensión del lenguaje.
@@ -172,7 +172,7 @@ Para facilitar la comprensión de los resultados y los experimentos realizados, 
 \end{minipage}
 \end{figure}
 
-\subsection{Procesamiento de im\'agenes usando embeddings}
+\subsection{Procesamiento de im\'agenes usando \textit{embeddings}}
 El uso de esta variante demostró ser particularmente efectivo para la recuperación de consultas detalladas en términos de posición. Para ilustrar cómo funciona, se muestra un ejemplo que destaca una mejora significativa en la recuperación de información precisa.
 
 Dos consultas fueron formuladas inicialmente, las cuales parecen bastante similares. Sin embargo, la situación posicional es el factor principal que las diferencia. En el primer escenario, la consulta no coincide con las posiciones de los objetos, lo que resulta en un valor de relevancia mucho menor que la consulta que hace referencia precisa a las relaciones posicionales entre los conceptos de la imagen. En este caso, la imagen es bastante clara, lo que facilita que el modelo CLIP[\cite{clip}] no genere errores y lance resultados no esperados. Es bastante claro lo que es cada objeto en la imagen.
@@ -276,7 +276,6 @@ image_12: 0.23648248612880707
 image_13: 0.29852136969566345
 image_14: 0.3131987154483795
 image_15: 0.25541138648986816
-___________________________________________
 
 \end{verbatim}
 
@@ -286,7 +285,7 @@ Por otro lado, se aprecian resultados con alta precisión que, para una observac
 
 Paralelamente a este ejemplo, se aprecia que la consulta " a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
-El resultado de la última consulta indica que no se encontraron, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "mujer", por lo tanto, no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
+El resultado de la última consulta indica que no se encontraron, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "woman", por lo tanto, no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
 
 
 \begin{figure}[H]
@@ -476,6 +475,6 @@ SIMILARITY
 
 
 \subsection{Observaciones}
-Como desarrollo principal, se buscaba lograr recuperar im\'agenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar im\'agenes utilizando otras im\'agenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en embeddings. El resultado de la recuperación de im\'agenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los par\'ametros para la recuperación imagen-imagen, ser\'a posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posiciones y conceptos, constituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
+Como desarrollo principal, se buscaba lograr recuperar im\'agenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar im\'agenes utilizando otras im\'agenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en \textit{embeddings}. El resultado de la recuperación de im\'agenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los par\'ametros para la recuperación imagen-imagen, ser\'a posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posiciones y conceptos, constituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
 
 
