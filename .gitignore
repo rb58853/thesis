@@ -21,3 +21,4 @@
 *.xml
 *.pdf_tex
 *.pdf
+!document/Thesis.pdf

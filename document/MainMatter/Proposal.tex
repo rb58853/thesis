@@ -43,9 +43,38 @@ La tercera y \'ultima etapa, es la encargada de recuperar datos relevantes para 
 \section{Etapa de procesamiento de imagen}
 Esta etapa se divide en tres variantes que, a su vez, poseen una base común como metodología, cambiando solo los conceptos que se emplean en cada una de estas. La metodología principal está dada por una serie de procesos que serán explicados en esta sección. Para facilitar la comprencion de esta, se definen dos conceptos fundamenales.
 
-El primero, es el concepto de \textbf{\textit{Image}}. Una \textit{Image} se define como un conjunto de características que se extraen de una imagen: un embedding, una descripción, una posición, una serie de vecinos por posición relativa a esta imagen, y límites en los ejes coordenados. Los vecinos hacen referencia a las imágenes cercanas a la \textit{Image} en cuestión. Los límites definen la región rectangular donde se encuentra ubicada la imagen, dado que una imagen no siempre ocupa todo el espacio del plano.
+El primero, es el concepto de \textbf{\textit{Image}}. Una \textit{Image} se define como un conjunto de características que se extraen de una imagen: un embedding, una descripción, una posición, una serie de vecinos por posición relativa a esta imagen, y límites en los ejes coordenados. Los vecinos hacen referencia a las imágenes cercanas a la \textit{Image} en cuestión. Los límites definen la región rectangular donde se encuentra ubicada la imagen, dado que una imagen no siempre ocupa todo el espacio del plano. En la figura \ref{image_example} se muestra un ejemplo de una Image, donde la imagen de referencia de la misma es la comprendida dentro del cuadro de segmentaci\'on. En la zona inferior a la imagen se definen sus caracter\'isticas.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.2\textheight]{Graphics/ImageExample.png}
+    \caption{Image}
+    \label{fig:image_example}
+\end{figure}
+\begin{verbatim}
+embedding: [.........................................]    
+caption: None    
+position: (0.7745,0.6639)
+#definidos en el orden (top,right,bottom,left)
+limits: (0.56, 0.88, 0.76, 77)
+\end{verbatim}
 
-El segundo concepto es \textbf{\textit{ImageSet}}. Un \textit{ImageSet} se define como un conjunto de \textit{Images} donde cada una de las imágenes de referencia de estos, está relacionada con una misma imagen, una imagen general. Cada una de estas \textit{Images} constituye una segmentación de la imagen principal. En resumen, \textit{ImageSet} es el conjunto de características de una imagen subdividida en segmentaciones relacionadas, posicionalmente, entre s\'i. 
+\verb|neigbords: #|Similar a figura \ref{fig:neighbords}    
+    
+
+El segundo concepto es \textbf{\textit{ImageSet}}. Un \textit{ImageSet} se define como un conjunto de \textit{Images} donde cada una de las imágenes de referencia de estos, está relacionada con una misma imagen, una imagen general. Cada una de estas \textit{Images} constituye una segmentación de la imagen principal. En resumen, \textit{ImageSet} es el conjunto de características de una imagen subdividida en segmentaciones relacionadas, posicionalmente, entre s\'i. En la figura \ref{imageset_example} se muestra un ejemplo de un ImageSet, donde cada una de las segmentaciones representa un Image, y el conjunto de todas estas conforman la lista de Images del ImageSet. En la zona inferior a la imagen se definen sus caracter\'isticas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.2\textheight]{Graphics/ImageSetExample.png}
+    \caption{ImageSet}
+    \label{fig:imageset_example}
+\end{figure}
+\begin{verbatim}
+origin: Image #imagen completa como Image    
+#Cada una de las imágenes comprendidas en un cuadro de segmentación como Image
+Images: List[Image]     
+\end{verbatim}
+
 
 Con estos dos conceptos aclarados, se pasa a definir la metodología base para el procesamiento de imágenes. Inicialmente, para una imagen dada, se define un \textit{ImageSet} que será el encargado de agrupar todas las características de la imagen en una relación, en un conjunto. Para la extracción de características y procesamiento de la imagen, esta pasa a ser procesada y segmentada por un modelo de segmentaci\'on de im\'agenes. Este trabajo, en particular, utiliza el modelo de segmentación SAM (\textit{Segment Anything Model})[\cite{huggingface2022sam}]; dado la escalabilidad del código, este \'ultimo es perfectamente sustituíble por otro modelo que se encargue de realizar la tarea de sementaci\'on de imágenes. En trabajos futuros, ser\'a posible hacer uso de modelos más potentes o más rápidos que el integrado actualmente. El tamaño de las segmentaciones, así como los hiperparámetros del modelo SAM, son modificables. En caso de ser necesario, los par\'ametros del modelo pueden ajustarse a la problem\'atica que surja.
 
@@ -84,7 +113,7 @@ Como respuesta a esta ambiguedad se plantearon varias métricas o alternativas p
 
 \subsubsection{Ángulo entre los centros y Distancia entre los extremos}
 
-Para el calculo de esta similitud se definen las siguientes varibles:
+Para el c\'alculo de esta similitud se definen las siguientes varibles:
 \begin{itemize}
     \item $d =$ Distancia euclideana entre las im\'agenes. Esta se calcula como la distancia m\'inima entre los l\'imites de las \textit{Images}.
 
@@ -173,7 +202,7 @@ La segunda variante, es la que, actualmente, se usa como default en el proyecto,
 
 Esta variante implica tomar la imagen segmentada, procesarla en un modelo generador de embeddings, se usa CLIP, y usar este embedding como concepto para hallar similitud. Dado que CLIP[\cite{clip}] está diseñado para generar embeddings para imágenes y para textos en el mismo espacio, esto es muy útil para usar este mismo generador para ambas partes y poder comparar similitud entre ellos.
 
-El proceso de generar embeddings con CLIP[\cite{clip}] es considerablemente rápido, tardando, grosso modo, 20ms para generar el embedding de una imagen con una GPU v100; se puede decir que es aún más rápido en cuanto a su velocidad relativa a modelos generadores de descripciones, que suelen tardar varios segundos, dependiendo del modelo específico que se use. El proceso de generación de embeddings con CLIP[\cite{clip}] , si bien esta expuesto a fallos o salidas no esperadas, suele ser más preciso que utilizar un modelo generador de descripciones al alcance del hardware disponible o la disponibilidad del modelo, dado que los más potentes no son código abierto. Se desconoce que tan preciso puede ser usar el modelo GPT4-V[\cite{gpt-4v}], el cual es muy potente en este campo, como también se desconoce que tan preciso sería usar CLIP-2[\cite{clip2-paper}]para generar embeddings, ambos modelos son de código cerrado de OpenIA.
+El proceso de generar embeddings con CLIP[\cite{clip}] es considerablemente rápido, tardando, \textit{grosso modo}, 20ms[\cite{BuildingImageClip-20ms}] para generar el embedding de una imagen con una GPU v100; se puede decir que es aún más rápido en cuanto a su velocidad relativa a modelos generadores de descripciones, que suelen tardar varios segundos, dependiendo del modelo específico que se use. El proceso de generación de embeddings con CLIP[\cite{clip}] , si bien esta expuesto a fallos o salidas no esperadas, suele ser más preciso que utilizar un modelo generador de descripciones al alcance del hardware disponible o la disponibilidad del modelo, dado que los más potentes no son código abierto. Se desconoce que tan preciso puede ser usar el modelo GPT4-V[\cite{gpt-4v}], el cual es muy potente en este campo, como también se desconoce que tan preciso sería usar CLIP-2[\cite{clip2-paper}]para generar embeddings, ambos modelos son de código cerrado de OpenIA.
 
 \subsection{Combinaci\'on de ambos modelos}
 La tercera variante es combinar ambas variantes anteriores. De esta forma, el cálculo de la similitud sería entonces la media de la similitud por texto y la similitud por imágenes. Esta variante suele ser tan precisa como los modelos de descripción que se usan para su descripción, pero exige mucho hardware con el cual no se cuenta, se hace dif\'icil utilizar modelos más potentes que BLIP[\cite{blip}].
@@ -192,7 +221,7 @@ El primero es el concepto de \textit{\textbf{Text}}. Un \textit{Text} se define 
     text.neighbors[next] = "cat sleeping on a couch"
 \end{verbatim}
 
-Para mejor comprension del lector, se debe asumir que las posiciones van desde $[(-1,1), (1,1)]$.
+Para mejor comprensi\'on del lector, se debe asumir que las posiciones van desde $[(-1,1), (1,1)]$.
 
 El segundo concepto es \textit{\textbf{TextSet}}. Un \textit{TextSet} se define como un conjunto de \textit{Texts} donde cada uno de representan subdivisiones de un \'unico texto general, además, también posee un \textit{Text} que hace referencia al texto original. En pocas palabras, \textit{TextSet} es el conjunto de textos que conforman el texto original, separados por puntos o por posiciones indicadas con lenguaje natural.
 
@@ -211,7 +240,7 @@ Seguido a esta fase de tokenización est\'a la fase de análisis sintáctico. Es
 
 \subsubsection{Parser de posiciones globales}
 
-En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada \textit{Text} que conformará el \textit{TextSet}. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio, o relativa a la imagen. Por ejemplo, para la frase: \textit{"there are a dog next to a ball in top of image"}, se parsea a través de la regla \textit{"IS text ON pos OF IMAGE"}, de esta forma se obtiene un \textit{Text} con string igual a \textit{"dog next to a ball"} y posici\'on, grosso modo, igual a $(0, 0.66)$. En un primer momento el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:
+En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada \textit{Text} que conformará el \textit{TextSet}. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio, o relativa a la imagen. Por ejemplo, para la frase: \textit{"there are a dog next to a ball in top of image"}, se parsea a través de la regla \textit{"IS text ON pos OF IMAGE"}, de esta forma se obtiene un \textit{Text} con string igual a \textit{"dog next to a ball"} y posici\'on, \textit{grosso modo}, igual a $(0, 0.66)$. En un primer momento el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:
 
 \begin{verbatim}
 tokens = [ON, TO, OF, AND, IS, POS, POSITION, IMAGE, WORD, NEXT]
