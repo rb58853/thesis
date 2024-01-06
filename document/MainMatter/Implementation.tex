@@ -12,8 +12,8 @@ El proyecto se estructura en distintas secciones. Cada una de estas tiene un pro
 
 \begin{lstlisting} [language=Python]
 from transformers import BlipProcessor, BlipForConditionalGeneration
-BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
+BLIP.PROCESSOR = BlipProcessor.from_pretrained('Salesforce/blip-image-captioning-large')
+BLIP.MODEL = BlipForConditionalGeneration.from_pretrained('Salesforce/blip-image-captioning-large').to('cuda')
 \end{lstlisting}
 
 La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado \textit{PyTorch}. 
@@ -21,7 +21,7 @@ La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} perm
 \subsubsection{Modelos de segmentaci\'on}
 De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM[\cite{huggingface2022sam}], que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.
 
-La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo "box" o de tipo "mask". El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
+La codificación de SAM[\cite{huggingface2022sam}] permite solicitar a las segmentaciones im\'agenes de tipo 'box' o de tipo 'mask'. El primer tipo devuelve todos los píxeles encontrados en el cuadro de segmentación, mientras que el segundo devuelve los píxeles de la m\'ascara de segmentación con el fondo blanco. La elección de qué tipo de segmentación utilizar queda a discreción del procesador de im\'agenes.
 
 \subsubsection{Generadores de \textit{embeddings}}
 En esta sección se integran los modelos de generación de \textit{embeddings}. En el caso particular de este trabajo, se ha integrado el modelo CLIP[\cite{git-clip}]. Al igual que en los casos anteriores, si se necesita integrar otros modelos de generación de \textit{embeddings}, debe hacerse dentro de esta carpeta.
@@ -180,10 +180,10 @@ Dos consultas fueron formuladas inicialmente, las cuales parecen bastante simila
 Este ejemplo demuestra cómo la variante implementada puede mejorar la precisión de la recuperación de información, especialmente cuando se trata de consultas detalladas en términos de posición
 
 \begin{verbatim}
-"a cat on left side of dog":
+'a cat on left side of dog':
 value: 0.3123254179954529
 
-"there is a dog on left of a cat":
+'there is a dog on left of a cat':
 value:0.6470594258080886
 \end{verbatim}
 
@@ -197,10 +197,10 @@ value:0.6470594258080886
 Paralelamente, se determinó la relevancia para las mismas consultas e im\'agenes, utilizando únicamente el mismo procedimiento que emplea CLIP[\cite{clip}], similitud del coseno[\cite{git-clip}], para encontrar similitud. En este caso, se calculó la similitud mediante la distancia del coseno.
 
 \begin{verbatim}
-"a cat on left side of dog":
+'a cat on left side of dog':
 value: 0.3123254179954529
 
-"there is a dog on left of a cat":
+'there is a dog on left of a cat':
 value: 0.31687411665916443
 \end{verbatim}
 
@@ -209,7 +209,7 @@ Es posible observar que la relevancia de la imagen para ambas consultas es muy s
 Para una mejor observación de este proceso, se ejecutó la recuperación de información en la muestra de im\'agenes. De esta manera, se pueden observar los resultados alcanzados por esta metodología. A continuación, se muestra una serie de consultas y resultados de aplicar la misma.
 
 \begin{verbatim}
-"a cat on left of an another cat":
+'a cat on left of an another cat':
 image_1: 0.5910724142355481
 image_2: 0.552273309297955
 image_3: 0.57958666555157
@@ -226,7 +226,7 @@ image_13: 0.27809980511665344
 image_14: 0.569566040832626
 image_15: 0.6235474817208575
 
-"a cat on left side of dog":
+'a cat on left side of dog':
 image_1: 0.24559526145458221
 image_2: 0.5900955027099477
 image_3: 0.5933583085861937
@@ -243,7 +243,7 @@ image_13: 0.6274699419732972
 image_14: 0.3123254179954529
 image_15: 0.27217918634414673
 
-"there is a dog on left of a cat":
+'there is a dog on left of a cat':
 image_1: 0.2507342994213104
 image_2: 0.5737969104184191
 image_3: 0.6017459795652185
@@ -260,7 +260,7 @@ image_13: 0.30912819504737854
 image_14: 0.6470594258080886
 image_15: 0.2859894335269928
 
-"a woman beside to cat, a woman in right of a dog":
+'a woman beside to cat, a woman in right of a dog':
 image_1: 0.25769439339637756
 image_2: 0.251406192779541
 image_3: 0.27823591232299805
@@ -279,13 +279,13 @@ image_15: 0.25541138648986816
 
 \end{verbatim}
 
-En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta "there are a dog in left of a cat". Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
+En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta 'there are a dog in left of a cat'. Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
 
-Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3} resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto, el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
+Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3} resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con 'dog', y por lo tanto, el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
 
-Paralelamente a este ejemplo, se aprecia que la consulta " a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
+Paralelamente a este ejemplo, se aprecia que la consulta 'a cat on left of a dog', que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
-El resultado de la última consulta indica que no se encontraron, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "woman", por lo tanto, no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
+El resultado de la última consulta indica que no se encontraron, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto 'woman', por lo tanto, no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
 
 
 \begin{figure}[H]
@@ -296,7 +296,7 @@ El resultado de la última consulta indica que no se encontraron, para ninguna i
 \end{figure}
 
 \begin{verbatim}
-"woman"
+'woman'
 value: 0.20488907396793365
 \end{verbatim}
 
@@ -338,7 +338,7 @@ Esta variante presenta un problema fundamental: los textos de concepto cercanos 
 
 \begin{verbatim}
 
-"a cat on left side of dog":
+'a cat on left side of dog':
 image_1: 1.1524357352905104
 image_2: 1.3433827930426756
 image_3: 1.2726673896730163
@@ -355,7 +355,7 @@ image_13: 1.2949859036677203
 image_14: 1.309315788897958
 image_15: 1.269946229080809
 
-"there is a dog on left of a cat:
+'there is a dog on left of a cat:
 image_1: 1.2083463593593047
 image_2: 1.3538045434242947
 image_3: 1.244656483332271
@@ -372,7 +372,7 @@ image_13: 1.2619162228862222
 image_14: 1.4098256637597801
 image_15: 1.3314236030203248
 
-"vase of roses in top of a bedside table":
+'vase of roses in top of a bedside table':
 image_1: 0.4997751770591399
 image_2: 0.5835944445734702
 image_3: 0.5381005093464214
@@ -401,9 +401,9 @@ En esta sección, se pretende mostrar algunos ejemplos de cómo el uso de las po
 Para comprender los ejemplos próximamente presentados, se explica la leyenda que usan los mismos.
 
 \begin{itemize}
-\item \verb|TEXT: "texto"| indica que 'texto' es el texto principal del \textit{Text}.
+\item \verb|TEXT: 'texto'| indica que 'texto' es el texto principal del \textit{Text}.
 \item \verb|POS: (x,y)| indica la posici\'on en la cual se encuentra la \textit{Image} analizada.
-\item \verb|label: ["neigbords"]| este label est\'a dado por cada una de las etiquetas de los vecinos de un \textit{Text}, solo mostrando las que al menos, poseen un vecino; cada elemento que corresponde a esta corresponde a un vecino.
+\item \verb|label: ['neigbords']| este label est\'a dado por cada una de las etiquetas de los vecinos de un \textit{Text}, solo mostrando las que al menos, poseen un vecino; cada elemento que corresponde a esta corresponde a un vecino.
 \item \verb|SIMILARTY| indica que lo pr\'oximo a mostrar ser\'an similitudes.
 \item \verb|cosine: value| indica el valor de la similitud del coseno.
 \item \verb|cosine_pos: value| indica el valor de la similitud del coseno teniendo en cuenta la posici\'on de la imagen.

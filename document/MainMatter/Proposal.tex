@@ -218,9 +218,9 @@ Al igual que en la etapa de procesamiento de imágenes, aquí también se defini
 El primero es el concepto de \textit{\textbf{Text}}. Un \textit{Text} se define como un conjunto de características que se extraen de un texto, las cuales son: un \textit{string}, un embedding, una posición y una serie de vecinos por posición relativos a este. Los vecinos hacen referencia a la cercanía entre conceptos. Por ejemplo, para el texto en lenguaje natural \textit{In top right side of the image there are a dog next to a cat sleeping on a couch}, se espera un \textit{Text} de la siguiente forma:
 
 \begin{verbatim}
-    text.string = "a dog next to a cat sleeping on a couch."
+    text.string = 'a dog next to a cat sleeping on a couch.'
     text.pos = (0.5, 0.5)
-    text.neighbors[next] = "cat sleeping on a couch"
+    text.neighbors[next] = 'cat sleeping on a couch'
 \end{verbatim}
 
 Para mejor comprensi\'on del lector, se debe asumir que las posiciones van desde $[(-1,1), (1,1)]$.
@@ -242,7 +242,7 @@ Seguido a esta fase de tokenización est\'a la fase de análisis sintáctico. Es
 
 \subsubsection{Parser de posiciones globales}
 
-En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada \textit{Text} que conformará el \textit{TextSet}. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio, o relativa a la imagen. Por ejemplo, para la frase: \textit{"there are a dog next to a ball in top of image"}, se parsea a través de la regla \textit{'IS text ON pos OF IMAGE'}, de esta forma se obtiene un \textit{Text} con \textit{string} igual a \textit{"dog next to a ball"} y posici\'on, \textit{grosso modo}, igual a $(0, 0.66)$. En un primer momento, el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:
+En un primer momento se parsean las posiciones globales, las posiciones de un objeto respecto a la imagen en su totalidad, de esta forma se obtiene la posición de cada \textit{Text} que conformará el \textit{TextSet}. Para ello se definen algunas reglas gramaticales que se usan en el lenguaje natural para expresar posición en el espacio, o relativa a la imagen. Por ejemplo, para la frase: \textit{'there are a dog next to a ball in top of image'}, se parsea a través de la regla \textit{'IS text ON pos OF IMAGE'}, de esta forma se obtiene un \textit{Text} con \textit{string} igual a \textit{'dog next to a ball'} y posici\'on, \textit{grosso modo}, igual a $(0, 0.66)$. En un primer momento, el tokenizador o analizador léxico referente a este análisis de posiciones globales posee como tokens los siguientes:
 
 \begin{verbatim}
 tokens = [ON, TO, OF, AND, IS, POS, POSITION, IMAGE, WORD, NEXT]
@@ -295,7 +295,7 @@ relation ::=  ON pos IS text
 
 \textbf{!TOKEN} indica que en ese patr\'on no puede haber un token tipo TOKEN en esa posici\'on. N\'otese que, en el caso de \textit{'IS text ON pos !OF '}, la ausencia de !OF al final podría generar conflictos de ambigüedad y hacer que palabras necesarias sean descartadas. \textbf{[TOKEN]|+} indica que el token se repite una o m\'as veces. \textbf{Any} se refiere a un token cualquiera que sea tratado como palabra.
 
-En la segunda parte del parser, se analizan las posiciones relativas de los objetos entre sí. Al igual que en el caso anterior, existen una serie de reglas definidas para esto. Por ejemplo, para el texto \textit{"dog next to a ball"}, el parser seguirá la regla \textit{" text NEXT TO text"}. De esta forma, se espera obtener un text con \textit{string} igual a \textit{ "dog" }, \textit{neighbors["next"] = 'a ball' }.
+En la segunda parte del parser, se analizan las posiciones relativas de los objetos entre sí. Al igual que en el caso anterior, existen una serie de reglas definidas para esto. Por ejemplo, para el texto \textit{'dog next to a ball'}, el parser seguirá la regla \textit{' text NEXT TO text'}. De esta forma, se espera obtener un text con \textit{string} igual a \textit{ 'dog' }, \textit{neighbors['next'] = 'a ball' }.
 
 El proceso de parser y tokenizaci\'on, es igual al anterior, solo cambian las reglas gramaticales, y tokens no necesariamente id\'enticos. Por ejemplo, el token \textit{Image} no existe en esta an\'alisis. La gram\'atica del parser est\'a definida por las reglas, tokens y palabras claves definidos a continuaci\'on.
 \begin{verbatim}
@@ -403,12 +403,12 @@ Para calcular la similitud entre un \textit{Text} y una \textit{Image}, se sigue
 \begin{itemize}
 
     \item  Se calcula la similitud del coseno entre el embedding del \textit{Text} y de la \textit{Image}: 
-    \[sim_cosine = 1- cos(v1,v2)/||v1||v2||\]
+    \[sim_{cosine} = 1- cos(v1,v2)/||v1||v2||\]
 
     \item  Se calcula la similitud por posici\'on, para ello se multiplica el valor de la similitud del coseno por la similitud posicional m\'as uno, para $v1$ y $v2$ vectores de posici\'on y $K$ un p\'arametro ajustable, la similitud posicional est\'a dada por la forma: 
-        \[sim_pos = K- \sqrt((v_1.pos.x - v_2.pos.x)^2+(v_1.pos.y - v_2.pos.y)^2).\]
+        \[sim_{pos} = K- \sqrt((v_1.pos.x - v_2.pos.x)^2+(v_1.pos.y - v_2.pos.y)^2).\]
     Luego, la similitud final para un concepto en una posici\'on dada distinta de \textit{None}, estar\'a dada por la f\'ormula
-            \[sim_inpos = sim_cosine *(sim_pos+1)\]
+            \[sim_{inpos} = sim_{cosine} *(sim_{pos}+1)\]
     
     \item Si el \textit{Image} y el \textit{Text} poseen similitud suficiente, es decir, una similitud superior a un umbral que determina si es relevante, entonces se avanza al siguiente paso. Se pregunta por cada vecino en la posici\'on $p$ relativa al \textit{Image} la similitud de este con cada vecino en la posición $p$ relativa a \textit{Text}. Por cada vecino en posici\'on $p$ en \textit{Text}, se guardar\'a el mejor, el m\'as relevante de los vecinos en la posici\'on $p$ de \textit{image}. Cada uno de los resultados obtenidos de este proceso se suma a la similitud final. Si el mejor de los resultados para una posición $p$ está por debajo de un cierto umbral, entonces significa que no hay nada semejante a lo que se espera en la posición indicada, por lo que la similitud entonces, disminuirá.
 
