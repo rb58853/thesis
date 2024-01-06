@@ -32,12 +32,12 @@ En esta sección se concentra todo lo relacionado con el entorno. Desde aquí, s
 \begin{lstlisting}[language=Python]
 class ImageEnvironment:
     ### Variables 
-    - `USE_CAPION_MODEL` Indica que se usará un modelo de descripciones de imágenes
-    - `CAPTION_MODEL` Este es el modelo que se usara para describir la imagen
-    - `CAPTION_IMPORTANCE` Importancia de la descripción, define que tan importante será la descripción de una imagen para la similitud. Valor=1 indica que tiene igual imporatancia que la imagen
-    - `KEY_IMAGES`: Esto es el tipo de imagen que usará como principal. (box or mask).
+    - `USE_CAPION_MODEL` Indica que se usar\'a un modelo de descripciones de im\'agenes
+    - `CAPTION_MODEL` Este es el modelo que se usar\'a para describir la im\'agen
+    - `CAPTION_IMPORTANCE` Importancia de la descripci\'on, define que tan importante ser la descripci\'on de una imagen para la similitud. Valor=1 indica que tiene igual importancia que la imagen.
+    - `KEY_IMAGES`: Esto es el tipo de imagen que usar\'a como principal. (box or mask).
     ### Funciones
-    - `max_similarity()`: Devuelve la máxima similitud que se puede alcanzar en la distancia entre dos imágenes. 
+    - `max_similarity()`: Devuelve la m\'axima similitud que se puede alcanzar en la distancia entre dos im\'agenes. 
     '''
 
     USE_CAPION_MODEL = False
@@ -47,6 +47,7 @@ class ImageEnvironment:
 
     def max_similarity():
         return ImageEmbeddingEnv.MAX_DISTANCE/ImageEmbeddingEnv.POS_UMBRAL
+
 \end{lstlisting}
 
 \subsubsection{Caracter\'istcas(\textit{features})}
