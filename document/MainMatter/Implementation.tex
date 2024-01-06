@@ -50,7 +50,7 @@ class ImageEnvironment:
 
 \end{lstlisting}
 
-\subsubsection{Caracter\'istcas(\textit{features})}
+\subsubsection{Caracter\'isticas(\textit{features})}
 Esta es la sección m\'as crucial, donde se implementan las clases que abordan los conceptos fundamentales del trabajo: Image, ImageSet, Text, TextSet. Idealmente, esta clase no debería ser modificada, a menos que se desee asignar nuevas funcionalidades a estas clases. Cada clase tiene sus propios procesos internos, pero su principal objetivo es almacenar características en una clase determinada. 
 La clase Image posee una subclase que se encarga exclusivamente de crear funciones para el c\'alculo de similitudes de vecindad. El resto de los componentes de ambas clases dependen únicamente de procesos externos, no implementados dentro de la clase en sí. Por ejemplo, el proceso de segmentación de im\'agenes y el an\'alisis sint\'actico del texto se llevan a cabo en módulos específicos encargados de esta función en particular.
 
@@ -172,7 +172,7 @@ Para facilitar la comprensión de los resultados y los experimentos realizados, 
 \end{minipage}
 \end{figure}
 
-\subsection{Procesamiento de im\'agenes usando embbedings}
+\subsection{Procesamiento de im\'agenes usando embeddings}
 El uso de esta variante demostró ser particularmente efectivo para la recuperación de consultas detalladas en términos de posición. Para ilustrar cómo funciona, se muestra un ejemplo que destaca una mejora significativa en la recuperación de información precisa.
 
 Dos consultas fueron formuladas inicialmente, las cuales parecen bastante similares. Sin embargo, la situación posicional es el factor principal que las diferencia. En el primer escenario, la consulta no coincide con las posiciones de los objetos, lo que resulta en un valor de relevancia mucho menor que la consulta que hace referencia precisa a las relaciones posicionales entre los conceptos de la imagen. En este caso, la imagen es bastante clara, lo que facilita que el modelo CLIP[\cite{clip}] no genere errores y lance resultados no esperados. Es bastante claro lo que es cada objeto en la imagen.
@@ -282,11 +282,11 @@ ___________________________________________
 
 En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta "there are a dog in left of a cat". Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
 
-Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3} resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
+Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3} resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto, el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
 
 Paralelamente a este ejemplo, se aprecia que la consulta " a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
-El resultado de la última consulta indica que no se encontró, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "mujer", por lo tanto no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
+El resultado de la última consulta indica que no se encontraron, para ninguna imagen, relaciones posicionales planteadas en la consulta. Esto es debido a que la imagen de la mujer resulta poco relevante para el texto "mujer", por lo tanto, no se entra a buscar vecindades de este concepto, y nunca se encuentra relevancia con lo pasado por la consulta
 
 
 \begin{figure}[H]
@@ -335,7 +335,7 @@ Estos resultados refuerzan la eficacia del algoritmo de similitud diseñado para
 \subsection{Procesamiento de im\'agenes usando descripciones}
 En esta sección, se presentan los resultados de la variante que utiliza descripciones, y se analiza la ineficiencia de la misma. Como resultado de esto, el uso de descripciones sin im\'agenes suele ser igualmente menos eficiente.
 
-Esta variante presenta un problema fundamental: los textos de concepto cernanos suelen ser muy similares. Por ejemplo, en las muestras e im\'agenes, para las im\'agenes y consultas relacionadas a perros y gatos, las relevancias alcanzadas son muy similares, dado que este caso los conceptos \textbf{dog} y \textbf{cat} tienen una relación de similitud de $0.91283133$. Esto implica que las im\'agenes que tengan \textbf{dog} como descripción ser\'an altamente relevantes con los textos que tengan \textbf{cat} en su contenido, y en estos casos son muy similares. A continuaci\'on se muestran tres de las consultas con sus respectivas similitudes hacia las im\'agenes.
+Esta variante presenta un problema fundamental: los textos de concepto cercanos suelen ser muy similares. Por ejemplo, en las muestras e im\'agenes, para las im\'agenes y consultas relacionadas a perros y gatos, las relevancias alcanzadas son muy similares, dado que en este caso los conceptos \textbf{dog} y \textbf{cat} tienen una relación de similitud de $0.91283133$. Esto implica que las im\'agenes que tengan \textbf{dog} como descripción ser\'an altamente relevantes con los textos que tengan \textbf{cat} en su contenido, y en estos casos son muy similares. A continuaci\'on se muestran tres de las consultas con sus respectivas similitudes hacia las im\'agenes.
 
 \begin{verbatim}
 
@@ -392,7 +392,7 @@ image_15: 0.5891194603734591
 
 \end{verbatim}
 
-En la consulta \textit{" a cat on left side of dog"}, se esperaría que la imagen de la figura \ref{fig:13} sea m\'as relevante que la imagen de la figura \ref{fig:14}. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se puede probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
+En la consulta \textit{" a cat on left side of dog"}, se esperaría que la imagen de la figura \ref{fig:13} sea m\'as relevante que la imagen de la figura \ref{fig:14}. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se pueden probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
 
 Por otro lado, cuando se trabaja trabajando con conceptos distintos como rosas y mesas, la diferencia de similitud es notable en cuanto a los resultados recuperados.
 
@@ -402,13 +402,13 @@ En esta sección, se pretende mostrar algunos ejemplos de cómo el uso de las po
 Para comprender los ejemplos próximamente presentados, se explica la leyenda que usan los mismos.
 
 \begin{itemize}
-\item \verb|TEXT: "texto"| indica que "texto" es el texto pincipal del \textit{Text}.
+\item \verb|TEXT: "texto"| indica que "texto" es el texto principal del \textit{Text}.
 \item \verb|POS: (x,y)| indica la posici\'on en la cual se encuentra la \textit{Image} analizada.
-\item \verb|label: ["neigbords"]| este label esta dado por cada una de las etiquetas de los vecinos de un \textit{Text}, solo mostrando las que al menos, poseen un vecino; cada elemento que corresponde a esta correponde a un vecino.
+\item \verb|label: ["neigbords"]| este label est\'a dado por cada una de las etiquetas de los vecinos de un \textit{Text}, solo mostrando las que al menos, poseen un vecino; cada elemento que corresponde a esta corresponde a un vecino.
 \item \verb|SIMILARTY| indica que lo pr\'oximo a mostrar ser\'an similitudes.
 \item \verb|cosine: value| indica el valor de la similitud del coseno.
 \item \verb|cosine_pos: value| indica el valor de la similitud del coseno teniendo en cuenta la posici\'on de la imagen.
-\item \verb|using region: value| indica el valor de similiud por posici\'on y coseno, adem\'as, teniendo en cuenta los vecinos de cada concepto.
+\item \verb|using region: value| indica el valor de similitud por posici\'on y coseno, adem\'as, teniendo en cuenta los vecinos de cada concepto.
 \end{itemize}
 
 \begin{figure}[H]
@@ -476,6 +476,6 @@ SIMILARITY
 
 
 \subsection{Observaciones}
-Como desarrollo principal, se buscaba lograr recuperar im\'agenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar im\'agenes utilizando otras im\'agenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en embeddings. El resultado de la recuperación de im\'agenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los par\'ametros para la recuperación imagen-imagen, ser\'a posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posciones y conceptos, consitituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
+Como desarrollo principal, se buscaba lograr recuperar im\'agenes a partir de una consulta en lenguaje natural. Sin embargo, se observó que la metodología es aplicable para recuperar im\'agenes utilizando otras im\'agenes como consulta. En este caso, se toma en cuenta las relaciones posicionales de cada objeto en cuestión junto con sus conceptos agrupados en embeddings. El resultado de la recuperación de im\'agenes debe ser ajustado para lograr una recuperación precisa. Una vez se ajusten los par\'ametros para la recuperación imagen-imagen, ser\'a posible realizar dicha tarea. N\'otese que este sistema de recuperaci\'on imagen-imagen basado en posiciones y conceptos, constituye un enfoque distinto al utilizado, por lo general, en la b\'usqueda de im\'agenes con im\'agenes como consulta.
 
 

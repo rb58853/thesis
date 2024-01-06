@@ -436,15 +436,15 @@ Como se ha mencionado, los parámetros utilizados para los cálculos de similitu
     \item umbral de divisi\'on de la distancia euclideana = float: se divide el valor de la distancia euclineada por el valor de este par\'ametro.
     \item \textbf{similitud m\'inima relevante para regiones vecinas} = float: Si la similitud es menor que este valor, se considera poco relevante y, en caso de que todas las relaciones posicionales sean poco relevantes, la similitud de la imagen va a disminuir para una descripci\'on dada.
     \item \textbf{similitud m\'inima relevante} = float: Esta es la similitud a partir de la cual puede considerarse relevante un concepto, se utiliza en el \'ambito general, la relevancia posicional y general no tienen que depender una de la otra.
-    \item \textbf{similitud m\'inima relevante original} = float: Esta es la similitud a partir de la cual puede considerarse relevante la similitud entre la imagen original y texto original.
+    \item \textbf{similitud m\'inima relevante original} = float: Esta es la similitud a partir de la cual puede considerarse relevante la similitud entre la imagen original y el texto original.
     \item \textbf{similitud m\'inima relevante usando descripciones} = float: Esta es la similitud a partir de la cual puede considerarse relevante una comparación a nivel de texto contra texto. 
     \item \textbf{uso de regiones negativas} = Bool: Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de cercan\'ia entre un objeto y otro.
-    \item \textbf{importancia de las regiones negativas} = float: Define que tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud de una regi\'on poco relevante.
+    \item \textbf{importancia de las regiones negativas} = float: Define qu\'e tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud de una regi\'on poco relevante.
 \end{itemize}
 
 \section{Otras Propuestas}
 
-Una propuesta inicialmente considerada fue mejorar el reconocimiento de colores en la imagen, esta finalmente fue abandonada. Se decidió centrar más interés en la propuesta de reconocimiento posicional, ya que CLIP[\cite{clip}] maneja eficientemente las relaciones de colores en las imágenes, y por el contrario no es tan competente en el manejo de las relaciones posicionales.
+Una propuesta inicialmente considerada fue mejorar el reconocimiento de colores en la imagen, esta finalmente fue abandonada. Se decidió centrar más interés en la propuesta de reconocimiento posicional, ya que CLIP[\cite{clip}] maneja eficientemente las relaciones de colores en las imágenes, y por el contrario, no es tan competente en el manejo de las relaciones posicionales.
 
 El análisis de colores es una propuesta válida que implica un análisis exhaustivo de las segmentaciones para determinar de manera óptima a qué objeto pertenece un color. Sin embargo, para implementarlo, se requiere trabajar con máscaras como forma de segmentación y definir combinaciones de embeddings junto con el color. Aunque CLIP[\cite{clip}] no es particularmente eficaz en la generación de embeddings para las máscaras, no está claro si esto mejoraría los resultados. Si se opta por utilizar otro modelo generador de embeddings se tendrían que implementar más formas de similitudes en las que el modelo actual no es bueno, probablemente, para esos nuevos modelos, el dise\~no de esta propuesta resultaría en mejores resultados.
 
@@ -503,7 +503,7 @@ class SamEnvironment:
 
 \subsubsection*{Image Environment}
 \begin{itemize}
-\item \verb|USE-CAPION-MODEL:| Indica que se usar\'a un modelo de descripciones de im\'agenes para extraer caracteristicas.
+\item \verb|USE-CAPION-MODEL:| Indica que se usar\'a un modelo de descripciones de im\'agenes para extraer caracter\'isticas.
 \item \verb|CAPTION-MODEL:| Este es el modelo que se usar\'a para describir la imagen.
 \item \verb|CAPTION-IMPORTANCE:| Importancia de la descripci\'on, define que tan importante ser\'a la descripci\'on de una imagen para la similitud. Valor = 1 indica que tiene igual importancia que el embedding de la imagen.
 \item \verb|KEY-IMAGES:| Esto es el tipo de imagen que usara como principal. (box or mask). \textbf{Box} son todos los p\'ixeles comprendidos en el cuadro de segmentaci\'on donde se ubica un Image. \textbf{Mask} se refiere solo a los p\'ixeles que contienen a la segmentaci\'on dada, el resto ser\'a p\'ixeles en blanco.
@@ -541,10 +541,10 @@ class NeighbordsEnvironment:
 \item \verb|EUCLIDEAN-DIV-UMBRAL:| Dividir la distancia euclideana entre este valor. C\'alculo de similitud por posiciones. 
 \item \verb|MIN-SIMILARTY-FOR-REGIONS:| Si la similitud es menor que este valor se considera irrelevante.
 \item \verb|MIN-NICE-SIMILARITY:| Esta es la similitud a partir de la cual se considera relevante un valor.
-\item \verb|MIN-NICE-SIMILARITY-ORIGIN:| Esta es la similitud a partir de la cual se considera relevante un valor entre la imagen original y texto original
+\item \verb|MIN-NICE-SIMILARITY-ORIGIN:| Esta es la similitud a partir de la cual se considera relevante un valor entre la imagen original y el texto original
 \item \verb|MIN-NICE-USE-CAPTION-SIMILARITY:| Esta es la similitud a partir de la cual se considera relevante un valor a nivel de texto contra texto.
 \item \verb|USE-NEGATIVE-REGIONS:| Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de la cercan\'ia entre un objeto y otro.
-\item \verb|IMPORTANCE-NEGATIVE-REGIONS:| Defne qu\'e tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud para una region poco relevante.
+\item \verb|IMPORTANCE-NEGATIVE-REGIONS:| Define qu\'e tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud para una regi\'on poco relevante.
 \end{itemize}
     
 \begin{lstlisting} [language=Python]
