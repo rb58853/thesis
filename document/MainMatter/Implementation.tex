@@ -104,7 +104,7 @@ Para facilitar la comprensión de los resultados y los experimentos realizados, 
 \end{figure}
 
 \subsection{Procesamiento de im\'agenes usando embbedings}
-El uso de esta variante demostró ser particularmente efectivo para la recuperación de consultas detalladas en términos de posición. Para ilustrar cómo funciona, consideremos un ejemplo que destaca una mejora significativa en la recuperación de información precisa.
+El uso de esta variante demostró ser particularmente efectivo para la recuperación de consultas detalladas en términos de posición. Para ilustrar cómo funciona, se muestra un ejemplo que destaca una mejora significativa en la recuperación de información precisa.
 
 Dos consultas fueron formuladas inicialmente, las cuales parecen bastante similares. Sin embargo, la situación posicional es el factor principal que las diferencia. En el primer escenario, la consulta no coincide con las posiciones de los objetos, lo que resulta en un valor de relevancia mucho menor que la consulta que hace referencia precisa a las relaciones posicionales entre los conceptos de la imagen. En este caso, la imagen es bastante clara, lo que facilita que el modelo CLIP[\cite{clip}] no genere errores y lance resultados no esperados. Es bastante claro lo que es cada objeto en la imagen.
 
@@ -213,7 +213,7 @@ ___________________________________________
 
 En estos ejemplos, se pueden apreciar buenos resultados relacionados con las posiciones espaciales. Un claro ejemplo de ello es la consulta "there are a dog in left of a cat". Los resultados se ajustan a las relaciones espaciales y no encuentran relevancia alta para im\'agenes donde cada uno de sus conceptos coincide en gran medida con lo pasado por la consulta. Por ejemplo, las im\'agenes de las figuras \ref{fig:13} y \ref{fig:9} poseen conceptos muy parecidos, pero posiciones diferentes.
 
-Por otro lado, encontramos resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3}, resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos, y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
+Por otro lado, se aprecian resultados con alta precisión que, para una observación humana, no deberían tenerla. El caso de la imagen de la figura \ref{fig:3}, resulta relevante dado que CLIP[\cite{clip}] entiende que el objeto a la izquierda tiene gran parecido con "dog", y por lo tanto el sistema lo encuentra relevante. En el caso de la imagen \ref{fig:2}, las posiciones son ambiguas, los objetos est\'an superpuestos, y el modelo de segmentación, SAM[\cite{sam-paper}], genera particiones varias para el perro y para el gato, lo que suele causar una ambigüedad posicional a nivel de im\'agenes.
 
 Paralelamente a este ejemplo, se aprecia que la consulta "a cat on left of a dog", que utiliza los mismos conceptos, también devuelve resultados satisfactorios en cuanto a la posición de los mismos.
 
@@ -266,7 +266,7 @@ Estos resultados refuerzan la eficacia del algoritmo de similitud diseñado para
 \subsection{Procesamiento de im\'agenes usando descripciones}
 En esta sección, se presentan los resultados de la variante que utiliza descripciones, y se analiza la ineficiencia de la misma. Como resultado de esto, el uso de descripciones sin im\'agenes suele ser igualmente menos eficiente.
 
-Esta variante presenta un problema fundamental: los textos de concepto cernanos suelen ser muy similares. Por ejemplo, en las muestras e im\'agenes, para las im\'agenes y consultas relacionadas a perros y gatos, las relevancias alcanzadas son muy similares, dado que este caso los conceptos \textbf{dog} y \textbf{cat} tienen una relación de similitud de $0.91283133$. Esto implica que las im\'agenes que tengan \textbf{dog} como descripción ser\'an altamente relevantes con los textos que tengan \textbf{cat} en su contenido, y en estos casos son muy similares. Veamos tres de las consultas con sus respectivas similitudes hacia las im\'agenes.
+Esta variante presenta un problema fundamental: los textos de concepto cernanos suelen ser muy similares. Por ejemplo, en las muestras e im\'agenes, para las im\'agenes y consultas relacionadas a perros y gatos, las relevancias alcanzadas son muy similares, dado que este caso los conceptos \textbf{dog} y \textbf{cat} tienen una relación de similitud de $0.91283133$. Esto implica que las im\'agenes que tengan \textbf{dog} como descripción ser\'an altamente relevantes con los textos que tengan \textbf{cat} en su contenido, y en estos casos son muy similares. A continuaci\'on se muestran tres de las consultas con sus respectivas similitudes hacia las im\'agenes.
 
 \begin{verbatim}
 
@@ -323,9 +323,9 @@ image_15: 0.5891194603734591
 
 \end{verbatim}
 
-En la consulta "a cat on left side of dog", se esperaría que la imagen [13] sea m\'as relevante que la imagen 14. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se puede probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
+En la consulta \textit{"a cat on left side of dog"}, se esperaría que la imagen de la figura \ref{fig:13} sea m\'as relevante que la imagen de la figura \ref{fig:14}. Sin embargo, en este caso no se obtuvieron buenos resultados. Para lograr mejores resultados, se puede probar m\'as variaciones de la importancia del texto y el uso de otros modelos descriptivos.
 
-Por otro lado, cuando estamos trabajando con conceptos distintos como rosas y mesas, la diferencia de similitud es notable en cuanto a los resultados recuperados.
+Por otro lado, cuando se trabaja trabajando con conceptos distintos como rosas y mesas, la diferencia de similitud es notable en cuanto a los resultados recuperados.
 
 \subsection{C\'alculos de posici\'on}
 En esta sección, se pretende mostrar algunos ejemplos de cómo el uso de las posiciones en los conceptos impacta en el resultado de la similitud. Para ello, se observar\'a la imagen \textit{Image 10} del \textit{ImageSet} en la figura \ref{fig:roses}, a la que se le pasan textos en cada caso. Se ver\'a cómo se comportan los cambios de vecinos y de posiciones usados.
@@ -387,7 +387,7 @@ SIMILARITY
 \end{verbatim}
 El uso de posiciones globales puede mejorar el resultado de la similitud, en estos casos se observa cómo mejora la relevancia de la imagen si la posición coincide con la dada. Por otro lado, el uso de regiones, o de vecindades posicionales, puede tanto mejorar los resultados de la similitud como empeorarlos. En este ejemplo se aprecia entonces la influencia de las posiciones para el resultado del c\'alculo de similitud.
 
-Veamos un ejemplo, usando la misma leyenda, de un caso donde al no detectar ningún vecino que cumpla con lo esperado en una posición, la similitud por regiones disminuye entonces su valor. La imagen evaluada es la segmentación 17 de la figura \ref{fig:dogs_pillow}.
+A continuaci\'on se muestra un ejemplo, usando la misma leyenda, de un caso donde al no detectar ningún vecino que cumpla con lo esperado en una posición, la similitud por regiones disminuye entonces su valor. La imagen evaluada es la segmentación 17 de la figura \ref{fig:dogs_pillow}.
 
 \begin{figure}[H]
 \centering
@@ -426,7 +426,7 @@ BLIP.PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning
 BLIP.MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to("cuda")
 \end{lstlisting}
 
-La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face 1. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado PyTorch. 
+La función \verb|from_pretrained()| de la biblioteca \textit{Transformers} permite cargar un modelo preentrenado desde Hugging Face 1. Esta función puede cargar el modelo a partir de una identificación de modelo, un directorio local donde se encuentran los pesos del modelo guardados, o un archivo de estado \textit{PyTorch}. 
 
 \subsubsection{Modelos de segmentaci\'on}
 De manera similar a la sección de modelos descriptivos, existe una sección dedicada a los modelos de segmentación. En esta sección, se integra el modelo SAM[\cite{huggingface2022sam}], que se utiliza en el código de tal manera que permita manipular las salidas y par\'ametros del modelo sin necesidad de alterar el código. Para lograr esto, se dispone de una clase \textit{SAM-Environment} en la sección de entorno, la cual contiene todos los par\'ametros modificables de este modelo. De esta forma, si se desea cambiar su comportamiento, se tiene la opción de hacerlo.

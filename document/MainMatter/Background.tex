@@ -1,5 +1,13 @@
 \chapter{Estado del Arte}\label{chapter:state-of-the-art}
 
+El uso de embeddings multimodales ha demostrado ser una técnica muy efectiva en este campo. Muchos proyectos han adoptado CLIP como una alternativa a los métodos tradicionales, aprovechando su capacidad para aprender representaciones conjuntas de imágenes y texto. Al explorar estos proyectos, podemos obtener una comprensión más profunda de cómo se pueden aplicar estos conceptos en situaciones prácticas, así como identificar áreas de mejora y oportunidades para futuras investigaciones.
+
+CLIP, además, es extremadamente rápido. Según los informes de rendimiento, puede generar embeddings para imágenes o texto en aproximadamente 20 milisegundos utilizando una GPU v100[\cite{BuildingImageClip-20ms}]. Finalmente, CLIP permite la integración de diferentes tipos de datos en un solo sistema de recuperación de imágenes. Al utilizar embeddings multimodales, puede manejar tanto texto como imágenes, lo que permite realizar búsquedas más ricas y precisas. Por razones como las planteadas, se propone investigar sobre trabajos que hayan utilizado CLIP como alternativa de generación de embeddings en el contexto de la recuperación de imágenes.
+
+La investigación llevada a cabo en torno a la detección de objetos y segmentación de imágenes adquiere relevancia crucial dentro del marco del trabajo presentado. Este estudio busca recuperar datos de consultas precisas a nivel de texto, y la utilización de posiciones representa una de las formas más detalladas para describir imágenes. Al fusionar técnicas de similitud y segmentación, se pueden generar contextos para los objetos que aparecen en la imagen de forma individual. Posteriormente, se pueden establecer relaciones entre estos objetos para lograr una comprensión más profunda de la imagen como un todo. Por lo tanto, se sugiere realizar investigaciones específicas relacionadas con este tema de segmentación de imágenes.
+
+Por otro lado, en este estudio de tesis, la temática central radica en la recuperación de imágenes. Dada la relevancia de este tema, es imperativo realizar un análisis exhaustivo y una investigación detallada de proyectos previos que han abordado este mismo objetivo.
+
 
 \section{Investigaciones basadas en uso de CLIP}
 
@@ -17,13 +25,13 @@ La detección de objetos en imágenes es otro aspecto crucial en la recuperació
 
 La combinación de modelos de segmentación y extracción de características de la imagen ha sido un enfoque común en el campo de la visión artificial. Este enfoque implica dividir una imagen en partes más pequeñas y manejables, identificar características clave en estas partes y luego utilizar estas características para realizar tareas como la clasificación de imágenes, la localización de objetos y la detección de objetos.
 
-En el artículo \textit{Segment Anything}[\cite{sam-paper}] de \textit{Meta AI}, se presenta un modelo llamado \textit{Segment Anything (SAM)} que se especializa en la segmentación de imágenes. El modelo SAM genera múltiples mapas binarios para cada imagen.
+En el artículo \textit{Segment Anything}[\cite{sam-paper}] de \textit{Meta AI}, se presenta un modelo llamado \textit{Segment Anything (SAM)} que se especializa en la segmentación de imágenes. El modelo SAM genera múltiples mapas binarios para cada imagen. Un aspecto destacado de SAM es su capacidad para realizar segmentación de "zero shot". En otras palabras, puede generar máscaras de segmentación válidas a partir de cualquier indicación proporcionada, incluso si esa indicación no estaba presente durante su entrenamiento. 
 
 \section{Investigaciones basadas en recuperaci\'on de im\'agenes}
 
 La mayoría de los modelos de recuperación de imágenes se fundamentan en el principio de recuperar de imagen a imagen. Sin embargo, existen modelos que, basándose en los anteriores y en modelos de lenguaje, utilizan la combinación de ambas entradas para recuperar información. En este contexto, el artículo \textit{Sentence-level Prompts Benefit Composed Image Retrieval}[\cite{sentence-level}] de \textit{Yang Bai et al.} propone una estrategia innovadora para la recuperación de imágenes compuestas utilizando indicaciones a nivel de oración.
 
-La recuperación de imágenes compuestas es un proceso que busca recuperar imágenes específicas utilizando una consulta que incorpora tanto una imagen de referencia como una descripción relativa. A pesar de que muchos modelos de CIR (\textit{Composed Image Retrieval}) existentes adoptan la estrategia de fusión tardía para combinar las características visuales y lingüísticas, este artículo sugiere una alternativa diferente.
+La recuperación de imágenes compuestas es un proceso que busca recuperar imágenes específicas utilizando una consulta que incorpora tanto una imagen de referencia como una descripción relativa. A pesar de que muchos modelos de CIR (\textit{Composed Image Retrieval})[\cite{CBIR-DeepLearning}][\cite{embedding2}] existentes adoptan la estrategia de fusión tardía para combinar las características visuales y lingüísticas, este artículo sugiere una alternativa diferente.
 
 Se han sugerido varios enfoques para generar un token de palabra a partir de la imagen de referencia, que luego se integra en la descripción relativa para la CIR. En contraste, los autores del artículo proponen aprovechar los modelos V-L (\textit{Vision - Language}) preentrenados, como BLIP-2 (\textit{Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models})[\cite{blip-2}], para generar indicaciones a nivel de oración.
 
