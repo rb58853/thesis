@@ -33,7 +33,7 @@ La tercera y \'ultima etapa, es la encargada de recuperar datos relevantes para 
 
 \begin{figure}[H]
 \centering
-\includegraphics[height=80mm]{Graphics/SystemRetrieval.drawio.png}
+\includegraphics[height=110mm]{Graphics/SystemRetrieval.drawio.png}
 \caption{Etapa del sistema de recuperaci\'on.}
 \label{fig:etapa3}
 \end{figure}
@@ -482,91 +482,46 @@ En lo próximo, se dividirá la sección en subsesiones, cada una de las cuales 
 
 \subsubsection*{SAM Environment}
 \begin{itemize}
-\item \verb|points-per-side:| define el número de puntos que se utilizan para generar las máscaras. Reducir este número puede acelerar el proceso de segmentación, pero también podría resultar en máscaras menos precisas.
-\item \verb|pred-iou-thresh:| define el umbral para la intersección sobre la unión (IOU)\supindex{}{Intersection Over Union.} en las predicciones. Aumentar este valor puede resultar en menos regiones propuestas, acelerando el proceso de segmentación.
-\item \verb|stability-score-thresh:| Aumentar este valor puede resultar en menos regiones propuestas.
-\item \verb|crop-n-layers:| define el número de capas en el recorte de la imagen. Reducir este número puede acelerar el proceso de segmentación, pero podría afectar negativamente la precisión del modelo.
-\item \verb|crop-n-points-downscale-factor:| Aumentar este valor puede resultar en menos puntos en el recorte de la imagen, acelerando el proceso de segmentación.
-\item \verb|min-mask-region-area:| Aumentar puede resultar en menos regiones propuestas, acelerando el proceso de segmentación, pero pueden perderse segmentaciones importantes.
+\item \verb|points-per-side = 32|: define el número de puntos que se utilizan para generar las máscaras. Reducir este número puede acelerar el proceso de segmentación, pero también podría resultar en máscaras menos precisas.
+\item \verb|pred-iou-thresh = 0.86|: define el umbral para la intersección sobre la unión (IOU)\supindex{}{Intersection Over Union.} en las predicciones. Aumentar este valor puede resultar en menos regiones propuestas, acelerando el proceso de segmentación.
+\item \verb|stability-score-thres = 0.92|: Aumentar este valor puede resultar en menos regiones propuestas.
+\item \verb|crop-n-layers = 1|: define el número de capas en el recorte de la imagen. Reducir este número puede acelerar el proceso de segmentación, pero podría afectar negativamente la precisión del modelo.
+\item \verb|crop-n-points-downscale-factor = 2|: Aumentar este valor puede resultar en menos puntos en el recorte de la imagen, acelerando el proceso de segmentación.
+\item \verb|min-mask-region-area = 20*20|: Aumentar puede resultar en menos regiones propuestas, acelerando el proceso de segmentación, pero pueden perderse segmentaciones importantes.
 \end{itemize}
-
-\begin{lstlisting} [language=Python]
-class SamEnvironment:
-    points_per_side=32
-    pred_iou_thresh=0.86
-    stability_score_thresh=0.92
-    crop_n_layers=1
-    crop_n_points_downscale_factor=2
-    min_mask_region_area= 20*20
-\end{lstlisting} 
-
 
 \subsubsection*{\textit{Image Environment}}
 \begin{itemize}
-\item \verb|USE-CAPION-MODEL:| Indica que se usar\'a un modelo de descripciones de im\'agenes para extraer caracter\'isticas.
-\item \verb|CAPTION-MODEL:| Este es el modelo que se usar\'a para describir la imagen.
-\item \verb|CAPTION-IMPORTANCE:| Importancia de la descripci\'on, define que tan importante ser\'a la descripci\'on de una imagen para la similitud. Valor = 1 indica que tiene igual importancia que el embedding de la imagen.
-\item \verb|KEY-IMAGES:| Esto es el tipo de imagen que usara como principal. (box or mask). \textbf{Box} son todos los p\'ixeles comprendidos en el cuadro de segmentaci\'on donde se ubica un Image. \textbf{Mask} se refiere solo a los p\'ixeles que contienen a la segmentaci\'on dada, el resto ser\'a p\'ixeles en blanco.
+\item \verb|USE-CAPION-MODEL = False|: Indica si se usar\'a un modelo de descripciones de im\'agenes para extraer caracter\'isticas.
+\item \verb|CAPTION-MODEL = BLIP|: Este es el modelo que se usar\'a para describir la imagen.
+\item \verb|CAPTION-IMPORTANCE = 1|: Importancia de la descripci\'on, define que tan importante ser\'a la descripci\'on de una imagen para la similitud. Valor = 1 indica que tiene igual importancia que el embedding de la imagen.
+\item \verb|KEY-IMAGES = 'box'|: Esto es el tipo de imagen que usara como principal. (box or mask). \textbf{Box} son todos los p\'ixeles comprendidos en el cuadro de segmentaci\'on donde se ubica un Image. \textbf{Mask} se refiere solo a los p\'ixeles que contienen a la segmentaci\'on dada, el resto ser\'a p\'ixeles en blanco.
 \end{itemize}
-
-\begin{lstlisting} [language=Python]
-class ImageEnvironment:
-    USE_CAPION_MODEL = False
-    CAPTION_MODEL =BLIP
-    CAPTION_IMPORTANCE = 1
-    KEY_IMAGES = 'box'
-\end{lstlisting} 
 
 
 \subsubsection*{Neighbords Environment}
 \begin{itemize}
-\item \verb|POS-UMBRAL:| Importancia dada a la distancia entre las posiciones de las imagenes. Mientras menor valor mayor importancia, se le da a las posiciones.
-\item \verb|PRIMARY-POW:| Elevaci\'on a la potencia del eje principal a la hora de calcular distancias por pesos.
-\item \verb|SECUNDARY-POW:| Elevaci\'on a la potencia del eje no principal a la hora de calcular distancias por pesos.
-\item \verb|MAX-DISTANCE:| Distancia m\'axima que puede existir entre dos im\'agenes para ser consideradas vecinas
+\item \verb|POS-UMBRAL = 1.2|: Importancia dada a la distancia entre las posiciones de las imagenes. Mientras menor valor mayor importancia, se le da a las posiciones.
+\item \verb|PRIMARY-POW  = 0.7|: Elevaci\'on a la potencia del eje principal a la hora de calcular distancias por pesos.
+\item \verb|SECUNDARY-POW = 1|: Elevaci\'on a la potencia del eje no principal a la hora de calcular distancias por pesos.
+\item \verb|MAX-DISTANCE = 0.85|: Distancia m\'axima que puede existir entre dos im\'agenes para ser consideradas vecinas
 \end{itemize}
-
-\begin{lstlisting} [language=Python]
-class NeighbordsEnvironment:
-    PRIMARY_POW = 1.2
-    SECUNDARY_POW = 0.7
-    MAX_DISTANCE = 1
-    POS_UMBRAL = 0.85
-\end{lstlisting} 
 
 \subsubsection*{Similarity Environment}
 
 \begin{itemize}
-\item \verb|EUCLIDEAN-POW-UMBRAL:| Elevar a la potencia la distancia euclieana.
-\item \verb|EUCLIDEAN-DIV-UMBRAL:| Dividir la distancia euclideana entre este valor. C\'alculo de similitud por posiciones. 
-\item \verb|MIN-SIMILARTY-FOR-REGIONS:| Si la similitud es menor que este valor se considera irrelevante.
-\item \verb|MIN-NICE-SIMILARITY:| Esta es la similitud a partir de la cual se considera relevante un valor.
-\item \verb|MIN-NICE-SIMILARITY-ORIGIN:| Esta es la similitud a partir de la cual se considera relevante un valor entre la imagen original y el texto original
-\item \verb|MIN-NICE-USE-CAPTION-SIMILARITY:| Esta es la similitud a partir de la cual se considera relevante un valor a nivel de texto contra texto.
-\item \verb|USE-NEGATIVE-REGIONS:| Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de la cercan\'ia entre un objeto y otro.
-\item \verb|IMPORTANCE-NEGATIVE-REGIONS:| Define qu\'e tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud para una regi\'on poco relevante.
+\item \verb|EUCLIDEAN-POW-UMBRAL = 1|: Elevar a la potencia la distancia euclieana.
+\item \verb|EUCLIDEAN-DIV-UMBRAL = 10|: Dividir la distancia euclideana entre este valor. C\'alculo de similitud por posiciones. 
+\item \verb|MIN-SIMILARTY-FOR-REGIONS = 0.24|: Si la similitud es menor que este valor se considera irrelevante.
+\item \verb|MIN-NICE-SIMILARITY = 0.24|: Esta es la similitud a partir de la cual se considera relevante un valor.
+\item \verb|MIN-NICE-SIMILARITY-ORIGIN = 0.22|: Esta es la similitud a partir de la cual se considera relevante un valor entre la imagen original y el texto original
+\item \verb|MIN-NICE-USE-CAPTION-SIMILARITY = 0.65|: Esta es la similitud a partir de la cual se considera relevante un valor a nivel de texto contra texto.
+\item \verb|USE-NEGATIVE-REGIONS = True|: Define si las regiones pueden aportar efecto negativo a la similitud, en el caso de la cercan\'ia entre un objeto y otro.
+\item \verb|IMPORTANCE-NEGATIVE-REGIONS = 2|: Define qu\'e tan importante es una regi\'on negativa, mientras m\'as alto, m\'as baja ser\'a la similitud para una regi\'on poco relevante.
 \end{itemize}
-    
-\begin{lstlisting} [language=Python]
-class SimilarityEnvironment:
-    EUCLIDEAN_POW_UMBRAL = 1
-    EUCLIDEAN_DIV_UMBRAL = 10
-    MIN_SIMILARTY_FOR_REGIONS = 0.24
-    MIN_NICE_SIMILARITY = 0.24
-    MIN_NICE_SIMILARITY_ORIGIN = 0.22
-    MIN_NICE_USE_CAPTION_SIMILARITY = 0.65
-    USE_NEGATIVE_REGIONS = True
-    IMPORTANCE_NEGATIVE_REGIONS = 2
-\end{lstlisting} 
 
 \subsubsection*{SystemRetrieval Environment}
     \begin{itemize}
-    \item \verb|MAX_RANK:| tamaño m\'aximo de salida el ranking. Cantidad de im\'agenes recuperadas con similitud del coseno
-    \item \verb|MAX_END_RANK:| tamaño m\'aximo de salida final del sistema de recuperaci\'on.
+    \item \verb|MAX_RANK = 1000|: tamaño m\'aximo de salida el ranking. Cantidad de im\'agenes recuperadas con similitud del coseno
+    \item \verb|MAX_END_RANK = 1000|: tamaño m\'aximo de salida final del sistema de recuperaci\'on.
     \end{itemize}
-        
-    \begin{lstlisting} [language=Python]
-    class SystemRetrievalEnvironment:
-        MAX_RANK = 1000
-        IMPORTANCE_NEGATIVE_REGIONS = 1000
-    \end{lstlisting} 
