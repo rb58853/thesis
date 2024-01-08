@@ -127,7 +127,7 @@ Para el c\'alculo de esta similitud se definen las siguientes variables:
 \end{itemize}
 Con estas variables definidas, donde para cada posici\'on var\'ia el valor del $b$ esperado, se llega a que la similitud posicional propuesta ser\'a:
 
-\[sim_pos = (1-d)*(1- |a-b|/2*\pi) * u \]
+\[sim_{pos} = (1-d)*(1- |a-b|/2*\pi) * u \]
 
 \subsubsection{Reescalado las imágenes.}
 
@@ -145,7 +145,7 @@ Esta alternativa calcula la distancia entre los objetos tanto en el eje vertical
     \item \textbf{Importancia distancia en el eje principal:} Define qué tan importante se considera la cercanía o lejanía en el eje principal de una vecindad. Por ejemplo, si se est\'a trabajando en una vecindad izquierda o derecha, el eje principal será el horizontal, el eje $x$. Una vez se tiene la distancia del eje principal, se eleva este resultado a la potencia del valor indicado por este par\'ametro.
 \end{itemize}
 
-A continuación se muestran valores de similitud por vecindad para dos métricas distintas, mostrando la similitud de los vecinos para la \textit{imagen 3}. Estos resultados son ajustables cambiando valores de parámetros espec\'ificos. La etiqueta define la posición relativa a la imagen en cuestion, en este caso la imagen 3, cada valor está compuesto por dos elementos, la referencia a la imagen en la posici\'on 0, y en la posici\'on 1, el valor de semejanza de sus posiciones con relación a la zona de la imagen que le corresponde, esta zona est\'a definida por la etiqueta.
+A continuación se muestran valores de similitud por vecindad para dos métricas distintas, mostrando la similitud de los vecinos para la \textit{imagen 3}. Estos resultados son ajustables cambiando valores de parámetros espec\'ificos. La etiqueta define la posición relativa a la imagen en cuestion, en este caso la imagen 3. Cada valor está compuesto por dos elementos, la referencia a la imagen en la posici\'on 0, y en la posici\'on 1, el valor de semejanza de sus posiciones con relación a la zona de la imagen que le corresponde, esta zona est\'a definida por la etiqueta.
 
 %\begin{figure}[h]
 \begin{figure}[H]
@@ -367,7 +367,7 @@ relation ::=   IS text ON pos OF text
 \end{verbatim}
 
 \subsubsection{Otras variantes de procesamiento de texto }
-Se ha considerado el uso de un \textit{Large Language Model} (LLM) para procesar los textos de las consultas. A través de una API se describiría el sistema del parser deseado, y se esperaría que este, se encargue de parsear el texto. Modelos como GPT-3[\cite{gpt3} podrían ser una opción viable. Sin embargo, se ha intentado reentrenar modelos de lenguaje para pasarles entradas y salidas, pero estos no han tenido éxito debido a que no están diseñados para devolver siempre la misma respuesta para una misma entrada. Por lo tanto, no es posible entrenarlos con este objetivo. Los modelos que han fallado en este aspecto incluyen GPT-2[\cite{gpt2}], BERT[\cite{bert}] y T5[\cite{t5}].
+Se ha considerado el uso de un \textit{Large Language Model} (LLM) para procesar los textos de las consultas. A través de una API se describiría el sistema del parser deseado, y se esperaría que este, se encargue de parsear el texto. Modelos como GPT-3[\cite{gpt3}] podrían ser una opción viable. Sin embargo, se ha intentado reentrenar modelos de lenguaje para pasarles entradas y salidas, pero estos no han tenido éxito debido a que no están diseñados para devolver siempre la misma respuesta para una misma entrada. Por lo tanto, no es posible entrenarlos con este objetivo. Los modelos que han fallado en este aspecto incluyen GPT-2[\cite{gpt2}], BERT[\cite{bert}] y T5[\cite{t5}].
 
 Otra alternativa v\'alida es la creación de un modelo propio que se encargue de procesar texto y devolver relaciones posicionales de este. Dado que se dispone de un parser, del cual se conoce qu\'e patrones en un texto encontrará resultados correctos. Con esta información, se puede conformar una gran parte de un enorme conjunto de datos de forma automática, utilizando modelos de lenguajes actuales como GPT-3[\cite{gpt3}]. Al describir al modelo, el tipo de estructura gramatical que se sabe, es correcta, se pueden generar muchos casos de entrenamiento que ser\'an correctamente procesados por el parser. En combinación de estas dos condiciones, se generarán grandes cantidades de datos de manera automática. Este modelo tiene la ventaja de que el \textit{dataset} puede ser ampliado con casos, para los cuales el parser pueda fallar, permitiendo así aprender tambi\'en de estos. Incluso se pueden crear diferentes parsers que no sean ambiguos entre sí para generar casos de prueba. Adem\'as, gracias al proceso de tokenizaci\'on, tambi\'en se tiene una relaci\'on de importancia para cada palabra, lo cual puede constituir una capa de atenci\'on que se centra, principalmente, en los tokens pertenecientes a la gram\'atica.
 
